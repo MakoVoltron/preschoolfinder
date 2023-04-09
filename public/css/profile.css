@@ -1,0 +1,53 @@
+.upper-section {
+    height: 250px;
+    padding-top: 15px;
+
+}
+
+.bg-gray {
+    background-color: #f7f7f7;
+}
+
+.edit-btn {
+    margin-top: 5px;
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+
+.update-btn {
+    display: none;
+}
+
+.profile-overlay {
+    position: absolute;
+    background-color: #30303076;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.profile-overlay i {
+    margin: 40%;
+    font-size: 40px;
+    color: white;
+}
+
+.profile-pic-container {
+    overflow: hidden;
+}
+
+.profile-pic-container img {
+    object-fit: cover;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.remove-photo {
+    cursor: pointer;
+}
+
+.remove-photo:hover {
+    color: red(15, 15, 15);
+}
+

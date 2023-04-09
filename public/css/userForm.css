@@ -1,0 +1,51 @@
+/* USER FORM */
+/* .form-container {
+    margin-top: 20vh;
+} */
+
+.form-card {
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding-bottom: 15px;
+}
+
+.form-container {
+    padding-bottom: 25px;
+}
+
+.form-container .img {
+    height: 210px;
+    background-image:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.263), rgba(0, 0, 0, 0.775)),
+    url('/images/form/preschools-finder-signup-form.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.form-container .img-recovery {
+    height: 210px;
+    background-image:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.263), rgba(0, 0, 0, 0.775)),
+    url('/images/form/preschools-finder-recovery-form.jpeg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.file-upload-area {
+    background-color: whitesmoke;
+    height: 85px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 300; 
+    color: rgb(157, 157, 157);  
+}
+
+.file-upload-area:hover {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    color: black;
+}

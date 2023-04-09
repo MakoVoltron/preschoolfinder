@@ -1,0 +1,77 @@
+h3 {
+    font-weight: 800;
+}
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: block;
+}
+
+.profile-pic-container {
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+    overflow: auto;
+    position: relative;
+}
+
+.review-profile-pic-container {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: auto;
+    position: relative;
+}
+
+
+.profile-pic-container img, .review-profile-pic-container img {
+    width: 100%;
+}
+
+.input-alert {
+    position: absolute;
+    top: 20%;
+    right: 10px;
+    color: red;
+}
+
+.alert-bottom {
+    font-size: 1.3em;
+    width: 400px;
+    background-color: white;
+    border-radius: 25px;
+    margin: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: absolute;
+    bottom: 10vh;
+    z-index: 999;
+    left: 0;
+    right: 0;
+    box-shadow: rgb(0 0 0 / 20%) 0px 8px 24px;
+}
+
+.alert-bottom .container {
+    padding: 8px 5px 8px 0px;
+}
+
+.alert-bottom p {
+    margin: 0;
+    padding-left: 10px;
+}
+
+.form-text {
+    font-size: 0.7em;
+}
+
+.divider {
+    border-bottom: 0.5px rgb(183, 183, 183) solid;
+    width: 90%;
+    margin-bottom: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
+    
+}

@@ -1,0 +1,181 @@
+
+<% layout('layouts/boilerplate') %>
+
+<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+
+<!-- FONT AWESOME -->
+<!-- <script src="https://kit.fontawesome.com/7d2468d921.js" crossorigin="anonymous"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
+
+<link rel="stylesheet" href="/css/autocomplete.css">
+<link rel="stylesheet" href="/css/homepage.css">
+
+
+
+<div class="cover-image">
+    <div class="col-6 offset-3 search-container">
+        <div class="text-center text-light">
+            <h1 class="text-center">Find Preschool Near Me</h1>
+            <p class="fw-light">Join our community of parents to <span class="fw-bold">SEARCH</span>, <span class="fw-bold">ADD</span> and <span class="fw-bold">REVIEW</span> Preschools in your town!</p>
+        </div>
+        <div class="input-group input-group-lg mb-3">
+            <input type="text" class="form-control" id="search-input" placeholder="Search for city, region, or zipcode" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <button class="btn btn-primary" type="button" id="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <!-- <p class="text-center"><span class="badge bg-light text-dark">Start now for FREE</span></p> -->
+        <div class="d-flex justify-content-center">
+            <div data-bs-toggle="modal" data-bs-target="#loginModal" class="btn btn-sm btn-light text-dark"><strong>Start now for FREE</strong></div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <h3>Recently added Preschools</h3>
+    <div class="row">
+        <% for (const school of recent) { %>
+            <div class="col-lg-3 item">
+                <a href="/school/<%= school._id %>">
+                    <figure>
+                        <% if (school.price.value != null) { %>
+                            <span class="badge bg-dark price"><%= school.price.currency%><%= school.price.value %> <span>per month</span></span>
+                        <% } %>
+                        <img src="<%= school.images.length > 0 ? school.images[0].url : '/images/no-image.jpeg' %>">
+                    </figure>
+                    <h5 class="title"><%= school.title %></h5>
+                </a>
+                <p class="location"><%= school.city.name %>, <%= school.country.name %></p>
+                <% for (const category of school.category) { %>
+                    <span class="badge bg-primary"><%= category %></span>
+                <% } %>
+               <p class="description"><%= school.description %></p>
+    
+            </div>
+        <% } %>
+
+        
+    </div>
+</div>
+
+
+<!-- <ul>
+<% for (const school of schools) { %> 
+    <a href=/school/<%= school._id %>><li><%= school.title %> </li></a>
+<% } %>
+</ul> -->
+
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.0/dist/index.bundle.min.js"></script> -->
+
+
+
+<script>
+    const searchInput = document.querySelector('#search-input');
+
+    searchInput.addEventListener('input', (e) => {
+        console.log(e.target.value)
+    })
+</script>
+
+<script src="/js/autocomplete.js"></script>
+
+<script>
+    // // !!!IMPORTANT - need to change when you go live
+    // let domain = 'http://localhost:3000'
+
+    // $(function () {
+    //     $.widget( "custom.catcomplete", $.ui.autocomplete, {
+    //         _create: function() {
+    //             this._super();
+    //             this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+    //         },
+    //         _renderMenu: function( ul, items ) {
+
+    //             if (items.length == 0) {
+    //                 alert("empty array")
+    //             }
+
+    //             let that = this;
+    //             currentCategory = "";
+    //             $.each( items, function( index, item ) {
+    //                 let li;
+    //                 if ( item.category != currentCategory) {
+    //                     if (item.category === "City") {
+    //                         ul.append( "<li class='ui-autocomplete-category'>" + "Location" + "</li>");
+    //                         currentCategory = item.category;
+    //                     }
+    //                 }
+
+    //                 li = that._renderItemData( ul, item);
+    //                 if ( item.category ) {
+    //                     li.attr( "aria-label", item.category + " : " + item.label)
+    //                 }
+    //             });
+    //         }
+    //     });
+
+    //     $('#search-input').catcomplete({
+    //         source: async function(req, res) {
+
+    //             let uniqueCities = [];
+    //             let listings = [];
+    //             let output = []; // final output object to be send to autocomplete
+
+    //             let data = await fetch(`${domain}/search?query=${req.term}`)
+    //                 .then(results => results.json())
+    //                 .then(results => results.map(result => {
+
+    //                     let city = {
+    //                         city: result.city.name,
+    //                         country: result.country.name,
+    //                         region: result.context.region,
+    //                         geometry: result.geometry
+    //                     }
+
+    //                     // check if the city from the result is unique
+    //                     // if yes, add to array for further processing
+    //                     if (uniqueCities.map((e) => {
+    //                         return e.city
+    //                     }).indexOf(city.city) == -1) {
+    //                         uniqueCities.push(city)
+    //                     }
+
+    //                     // return { label: result.city.name, value: result.city.name, country: result.country.name }
+    //                     // return { label: result.city.name, value: result.city.name, country: result.country.name }
+    //                 }))
+
+    //             uniqueCities.slice(0,5).forEach(el => output.push({label: el.city + ', ' + el.country, value: el.city, category: "City", cityCenter: el.geometry.coordinates}))
+
+    //             res(output)
+    //         },
+
+    //         appendTo: "#search-dropdown-results",
+
+    //         minLength: 2,
+
+    //         select: function(event, ui) {
+    //             console.log(ui)
+    //             if (ui.item.category == "City") {
+    //                 window.location.href = `${domain}/searchmap?lat=${ui.item.cityCenter[0]}&long=${ui.item.cityCenter[1]}`;
+    //             }
+    //         },
+    //         response: function(event, ui) {
+    //             if (!ui.content.length) {
+    //                 let noResult = { value: "", label: "Oh boy! No results found. Try again!"};
+    //                 ui.content.push(noResult)
+    //             }
+    //         }
+    //     }).catcomplete( "instance" )._renderItem = function(ul, item) {
+    //         return $( "<li>" )
+    //             .append( "<span>" + item.label + "</span>")
+    //             .appendTo(ul)
+    //     };
+    // });
+
+</script>

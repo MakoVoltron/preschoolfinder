@@ -1,0 +1,69 @@
+<div>
+    <div id="add-container" class="">
+        <button type="button" class="btn-close" aria-label="Close"></button>
+        <div class="review-search">
+            <p class="review-card-headline">Add preschool from your area</p>
+            <input id="autocomplete" placeholder="Type name..." type="text">
+            <div id="results-container"></div>
+        </div>
+
+        <div class="review-vote hide">
+            <div class="review-header">
+                <div class="review-title">
+                    <p>Montessori Andílek</p>
+                    <small>Pod radnicí 152/3, 150 00 Praha 5-Košíře, Czechia</small>
+                </div>
+                
+            </div>
+            <div class="review-progress"></div>
+            <div class="review-content">
+                <form>
+                    <% let x = 1 %>
+                    <% for(category of categories) { %>
+                        <% if (category.use) { %> 
+                        
+                        <div class="review-card hide" data-card="<%= x %>">
+                            <p class="review-card-text-sm"><%= category.q1 %></p>
+                            <p class="review-card-headline"><%= category.q2 %></p>
+                            <input type="checkbox" class="btn-check" name="school[<%= category.type %>]" value="<%= category.short %>" id="<%= category.name %>" autocomplete="off">
+                            <div class="row gx-2">
+                                <div class="col text-center">
+                                    <div><label class="emoji-btn" for="<%= category.name %>">👍</label></div>
+                                    <p class="review-card-text-sm">Yes</p>
+                                </div>
+                                <div class="col text-center">
+                                    <div><label class="emoji-btn">👎</label></div>
+                                    <p class="review-card-text-sm">No / Not Sure</p>
+                                </div>
+                            </div>
+                        </div>
+                        <% x++ %>
+                        <% } %>
+                    <% } %>
+                    <div class="review-card hide" data-card="<%= x %>">
+                        <div class="text-center">
+                            <p class="review-card-text-sm mb-0">Woo-Hoo!</p>
+                            <p class="review-card-headline mb-0">Thanks for sharing!</p>
+                        </div>
+
+                        <div class="submit-container">
+                            <button class="">Submit for review</button>
+                        </div>
+                        <div class="text-center display-4">🥳</div>
+                    </div>
+                    <input type="hidden" name="school[google_id]">
+                    <input type="hidden" name="school[name]">
+                    <input type="hidden" name="school[address]">
+                    <input type="hidden" name="school[lat]">
+                    <input type="hidden" name="school[long]">
+                </form>
+            </div>
+        </div>
+    </div>
+    <button id="add-btn">
+        <div class="btn-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="spinner-grow text-secondary btn-spinner hide" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </button>
+</div>

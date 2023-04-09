@@ -1,0 +1,87 @@
+
+<% layout('layouts/boilerplate')%>
+
+<link href="/css/userForm.css" rel="stylesheet">
+
+<% if (!currentUser) { %>
+    <div class="form-container ms-3 me-3">
+        <div class="col-sm-12 col-md-6 m-auto mt-3 form-card">
+            <!-- Header image -->
+            <div class="img d-flex justify-content-center align-items-center">
+                <div class="text-center text-white p-4">
+                    <h3 class="text-uppercase mb-0">Claim your school</h3>
+                    <!-- <p class="fw-light mb-1">We need you to be logged in!</p> -->
+                </div>
+            </div>
+
+            <!-- Form Content -->
+            <div class="p-3">
+                <p>Your listing is completely <strong>free of charge</strong>!</p>
+                <p>Because we love connecting parents with their favorite preschools and kindergartens.</p>
+                <p>Claiming your business gives you an access to school Dashboard, where you can upload your own photos and edit business informations so they are always up-to-date.</p>
+
+                <p>For any questions, send an email to hello.preschoolfinder@gmail.com</p>
+
+                <div class="d-grid">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#loginModal" class="btn btn-primary">Login to Claim Your School</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } else { %>
+    <div class="form-container ms-3 me-3">
+        <div class="col-sm-12 col-md-6 m-auto mt-3 form-card">
+            <!-- Header image -->
+            <div class="img d-flex justify-content-center align-items-center">
+                <div class="text-center text-white p-4">
+                    <h3 class="text-uppercase mb-0">Claim your school</h3>
+                    <!-- <p class="fw-light mb-1">We need you to be logged in!</p> -->
+                </div>
+            </div>
+
+            <!-- Form Content -->
+            <div class="p-3">
+                <h6>You are claiming</h6>
+                <h3><%= school.title %></h3>
+                <i class="fa-solid fa-location-pin"></i> <small class="fw-light"><%= school.context.fullAddress %></small>
+                <div class="mt-3">
+                    <small>
+                    <p>Your listing is completely <strong>free of charge</strong>!</p>
+                    <p>Because we love connecting parents with their favorite preschools and kindergartens.</p>
+                    <p>Claiming your business gives you an access to school Dashboard, where you can upload your own photos and edit business informations so they are always up-to-date.</p>
+    
+                    <p>For any questions, send an email to hello.preschoolfinder@gmail.com</p>
+                    </small>
+                </div>
+<!-- 
+                <div>
+                    <p><strong>URL of your listing</strong></p>
+                </div> -->
+                <form action="/school/<%= school._id %>/claim" method="POST" enctype="multipart/form-data" novalidate>
+                    <div class="mb-4">
+                        <p class="mb-0"><strong>Business Proof</strong></p>
+                        <small class="text-muted">E.g. utility bill or any document showing your address</small>
+                        <!-- <div class="mb-3"> -->
+                          
+                        <!-- <label for="file-upload" class="d-inline">
+                            <div class="file-upload-area mt-2">
+                                <span>Choose a file</span>
+                            </div>
+                        </label> -->
+                        <input class="form-control" id="file-upload" type="file" name="image">
+    
+                    </div>
+    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+
+
+<% } %>
+

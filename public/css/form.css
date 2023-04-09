@@ -1,0 +1,58 @@
+.form-container {
+    /* border: solid 1px #e6e6e6; */
+    /* margin-top: 20vh; */
+    border-radius: 8px;
+    padding: 10px;
+    padding-bottom: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+
+/* STEPS */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.step-container {
+    display: flex;
+    /* justify-content: right; */
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+}
+
+.step__circle {
+    border-radius: 50%;
+    height: 34px;
+    width: 34px;
+    text-align: center;
+    line-height: 30px;
+    border: solid 2px #d0d0d0;
+    color: #d0d0d0;
+    font-weight: 600;
+}
+
+.step__text {
+    padding-left: 8px;
+    color: #d0d0d0;
+}
+
+
+.step.active > .step__circle {
+    color: #5d5d5d;
+    border: solid 2px #5d5d5d;
+}
+
+.step.active > .step__text {
+    color: #5d5d5d;
+}
+
+/* CARDS */
+.hidden {
+    display: none;
+}
+

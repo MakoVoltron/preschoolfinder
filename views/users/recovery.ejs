@@ -1,0 +1,43 @@
+<% layout('layouts/boilerplate')%>
+
+<!-- <link href="/css/userForm.css" rel="stylesheet"> -->
+
+<form action="/user/recovery" method="POST" class="needs-validation" novalidate>
+    <div class="form-container ms-3 me-3">
+
+        <div class="col-sm-12 col-md-6 m-auto col-lg-5 mt-3 form-card">
+            <!-- <h1>Sign Up</h1> -->
+            <!-- Header image -->
+            <div class="img d-flex justify-content-center align-items-center">
+                <div class="text-center text-white p-4">
+                  <h3 class="text-uppercase mb-0">Account Recovery</h3>
+                  <p class="fw-light mb-1">Please enter the emaill address used to register your account, and we will email you instructions to reset password.</p>
+                  <!-- <span class="badge bg-light text-dark">Completely FREE!</span> -->
+                </div>
+            </div>
+            <!-- Form Content -->
+            <div class="p-3">
+    
+                <div class="mb-3">
+                    <input required class="form-control" type="email" name="email" placeholder="Your registered email">
+                    <div class="invalid-feedback">
+                        Please, type a valid email address
+                    </div>
+                </div>
+    
+                <div class="d-grid mb-3">
+                    <button class="btn btn-success d-grid">Continue</button>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="divider"></div>
+                    <div class="text-muted">or</div>
+                    <div class="divider"></div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <a href="/user/register" class="btn btn-outline-light text-dark btn-sm">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

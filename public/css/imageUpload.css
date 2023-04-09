@@ -1,0 +1,16 @@
+#remove-image-btn {
+    border: none;
+    border-radius: 25px;
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: 0.8em;
+    transition: all 0.3s;
+    position: absolute;
+    right: 1em;
+    top: 1.3em;
+}
+
+#remove-image-btn:hover {
+    background-color: rgb(31, 31, 31);
+    color: white;
+}

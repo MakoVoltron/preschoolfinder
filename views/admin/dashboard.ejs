@@ -1,0 +1,39 @@
+<% layout('layouts/boilerplate') %>
+
+<link rel="stylesheet" href="/css/homepage.css">
+
+
+<% if (schools.length > 0) { %>
+<div class="container-fluid bg-gray">
+    <div class="container pt-2 pb-2 ">
+        <h5 class="mt-2">All schools</h5>
+        <form action="/admin/school?_method=DELETE" method="POST">
+            <div class="mb-2">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </div>
+
+            <div class="row">
+                <% for (const school of schools) { %>
+                    <div class="col-lg-3 col-md-6 col-sm-12 item pb-1">
+                        <input class="form-check-input" type="checkbox" value="<%= school._id %>" name="school[]">
+                        <a href="/school/<%= school._id %>">
+                            <figure>
+                                <% if (school.price.value != null) { %>
+                                    <span class="badge bg-dark price"><%= school.price.currency%><%= school.price.value %> <span>per month</span></span>
+                                <% } %>
+                                <img src="<%= school.images.length > 0 ? school.images[0].url : '/images/no-image.jpeg' %>">
+                            </figure>
+                            <h6 class="title"><%= school.title %></h6>
+                        </a>
+                        <p class="location"><%= school.city.name %>, <%= school.country.name %></p>    
+                    </div>                
+                <% } %>
+            </div>
+        </form>
+    </div>
+</div>
+<% } else { %>
+    <div class="container-fluid bg-gray">
+        No listings here
+    </div>
+<% } %>

@@ -1,0 +1,59 @@
+/* Category  */
+.ui-autocomplete-category {
+    font-weight: bold;
+    color: gray;
+    letter-spacing: 2px;
+    /* padding: .5em .4em; */
+    /* margin: .8em 0 .2em; */
+    /* margin: .5em 0px; */
+    line-height: 1.2;
+    padding: 5px 0 5px 25px;
+    background-color: rgb(243, 243, 243);
+}
+
+#search-dropdown-results {
+    position: relative;
+}
+
+#ui-id-1 {
+    /* left: 331.25px; */
+    border: 0px;
+    margin-top: 6px;
+    /* border-radius: 25px; */
+    /* width: 100%; */
+    /* background-color: beige; */
+    max-height: calc(100vh - 150px) !important;
+    overflow: hidden auto;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.ui-menu .ui-menu-item-wrapper {
+    position: relative;
+    padding: 5px 0 5px 20px;
+}
+
+.ui-autocomplete-current:hover {
+    background: #F7F7F7;
+    cursor: pointer;
+}
+
+.ui-menu-item-wrapper {
+    position: relative;
+    /* background-color: lightblue; */
+    /* padding-left: 25px; */
+    display: block;
+}
+
+.ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+    /* background: #a80c0c !important; */
+    background: #F7F7F7 !important;
+    color: black;
+    border: #F7F7F7;
+    /* font-weight: 400; */
+} 
+
+
+/* .search-bar {
+    margin: auto;
+    width: 95%;
+} */

@@ -1,0 +1,42 @@
+<% layout('layouts/boilerplate')%>
+
+<form action="/user/<%= user._id %>/update" method="POST" class="validated-form" novalidate>
+    
+    <div class="col-md-6 m-auto col-lg-4 mt-3">
+        
+        <h1 class="display-2 text-center"><i class="fa-solid fa-circle-user"></i></h1>
+        <h2 class="text-center">Update profile</h2>
+        <%- include('../partials/flash') %>
+        <div class="mb-3">
+            <!-- <label class="form-label text-muted" for="username">Username</label> -->
+            <input required class="form-control" type="text" id="username" name="username" placeholder="Jane Doe" value="<%= user.username %>">
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+            <div class="invalid-feedback">
+                Please, choose a username.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <!-- <label class="form-label text-muted" for="email">Email</label> -->
+            <input required class="form-control" type="email" id="email" name="email" placeholder="Email" value="<%= user.email %>">
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+            <div class="invalid-feedback">
+                Please, type your email.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <a href="/forgot"><button type="button" class="btn btn-danger">Reset password</button></a>
+
+        <div class="d-grid pt-3">
+            <button class="btn btn-success d-grid">Update</button>
+        </div>
+        <!-- <div class="mt-2 text-end">
+            <small>Already registered? <a href="/login"><strong>Log In <i class="fa-solid fa-user"></i></strong></a> here!</small>
+        </div> -->
+    </div>
+</form>

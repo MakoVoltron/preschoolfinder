@@ -1,0 +1,24 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="col-10 offset-1 pt-4">
+    <h1 class="fw-light">Preschools & Kindergartens in <span class="fw-bold"><%= schools[0].country.name %></span> <span>(<%= schools.length %>)</span></h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/"><i class="fa-solid fa-house"></i></a></li>
+            <li class="breadcrumb-item"><a href="/<%= schools[0].context.continent.lowercase %>" class="text-decoration-none"><%= schools[0].context.continent.name %></a></li>
+            <li class="breadcrumb-item"><a href="/<%= schools[0].context.continent.lowercase %>/<%= schools[0].country.lowercase %>" class="text-decoration-none"><strong><%= schools[0].country.name %></strong></a></li>
+        </ol>
+    </nav>
+
+    <h3><%= schools[0].country.name %> (<%= schools.length %> Preschools)</h3>
+    <% for (const [key, value] of Object.entries(counts)) { %>
+        <a class="text-decoration-none" href="/<%= schools[0].context.continent.lowercase %>/<%= schools[0].country.lowercase %>/<%= schools[0].city.lowercase %>">
+            <button class="btn btn-outline-dark position-relative"><%= key %>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark text-light">
+                    <%= value %>
+                    <span class="visually-hidden">preschools in city</span>
+                  </span>
+            </button>
+        </a>
+    <% } %>
+</div>

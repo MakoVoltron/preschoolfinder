@@ -1,0 +1,70 @@
+<% layout('layouts/boilerplate') %>
+<link rel="stylesheet" href="/css/searchmap.css">
+<link rel="stylesheet" href="/css/stars.css">
+
+<div class="col-10 offset-1 pt-4">
+    <h1 class="fw-light">Preschools & Kindergartens in <span class="fw-bold"><%= schools[0].city.name %></span> (<%= schools.length %>)</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/"><i class="fa-solid fa-house"></i></a></li>
+            <li class="breadcrumb-item"><a href="/<%= schools[0].context.continent.lowercase %>" class="text-decoration-none"><%= schools[0].context.continent.name %></a></li>
+            <li class="breadcrumb-item"><a href="/<%= schools[0].context.continent.lowercase %>/<%= schools[0].country.lowercase %>" class="text-decoration-none"><%= schools[0].country.name %></a></li>
+            <li class="breadcrumb-item"><a href="/<%= schools[0].context.continent.lowercase %>/<%= schools[0].country.lowercase %>/<%= schools[0].city.lowercase %>" class="text-decoration-none"><strong><%= schools[0].city.name %></strong></a></li>
+        </ol>
+    </nav>
+
+    <div class="row listing__container">
+
+        <div class="listing__list row gx-2">
+            <% for (const school of schools) { %>
+                <div class="listing-card col-6">
+                    <a href="/school/<%= school._id %>">
+                        <!-- Card content  -->
+                        <div class="card-content">
+                            <div class="cover-image">
+                                <img src="<%= school.images.length ? school.images[0].url : '/images/no-image.jpeg' %>">
+                            </div>
+                            <div class="details">
+                                <div class="d-flex align-items-center">
+                                    <!-- Tier -->
+                                    <% if (school.tier === 'premium') { %>
+                                        <img class="premium-icon" src="/images/icons/premium.png">
+                                    <% } %>
+                                    <div class="listing-title ms-1"><%= school.title %></div>
+                                   
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                            
+                                    <div class="d-flex align-items-center">
+                                   
+                                        <% if (school.totalRating) { %>
+                                            <div class="starability-result" data-rating="<%= Math.ceil(school.totalRating) %>">
+                                                Rated: <%= school.totalRating %> stars
+                                            </div> 
+                                            <small class="reviews-total text-muted">(<%= school.reviews.length %>)</small>
+                                        <% } else { %>
+                                            <div class="starability-result" data-rating="0">Rated: 0 stars</div>
+                                        <% } %>
+                                        <% if (school.price.value) { %>
+                                            <div class="cost ms-4"><span class="value"><%= school.price.value %></span> <span class="currency"><%= school.price.currency %></span> a month</div>
+                                        <% } %>
+                                        <!-- <div class="cost"><span class="value"><%= school.price.value %></span><span class="currency">USD</span><span>/month</span></div> -->
+                                    </div>
+
+                                    <div>
+                                        <% for (const category of school.category) { %>
+                                            <span class="badge bg-primary"><%= category %></span>
+                                        <% } %>
+                                    </div>
+                                </div>
+            
+                                <div class="listing-street position-absolute bottom-0 mb-1"><%= school.context.fullAddress %></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

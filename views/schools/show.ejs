@@ -1,0 +1,627 @@
+<% layout('layouts/boilerplate') %>
+<link rel="stylesheet" href="/css/show.css">
+<link rel="stylesheet" href="/css/stars.css">
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+   integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+   crossorigin=""/>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+   integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+   crossorigin="">
+</script>
+
+
+
+<div class="col-10 offset-1 pt-4">
+  <div class="row">
+ 
+    <!-- LEFT COLUMN -->
+    <div class="col-lg-8">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/"><i class="fa-solid fa-house"></i></a></li>
+          <li class="breadcrumb-item"><a class="text-decoration-none" href="/<%= school.context.continent.lowercase %>"><%= school.context.continent.name %></a></li>
+          <li class="breadcrumb-item"><a class="text-decoration-none" href="/<%= school.context.continent.lowercase %>/<%= school.country.lowercase %>"><%= school.country.name %></a></li>
+          <li class="breadcrumb-item"><a class="text-decoration-none" href="/<%= school.context.continent.lowercase %>/<%= school.country.lowercase %>/<%= school.city.lowercase %>"><strong><%= school.city.name %></strong></a></li>
+        </ol>
+      </nav>
+      
+      <% if (currentUser) { %>
+        <% var owner = school.ownership.find(owner => owner.owner._id.toString() === currentUser._id.toString()) %>
+        <% if (owner) { %>
+          <% if (owner.verified === true) { %>
+            <div class="alert alert-success" role="alert">
+              Yoo-Hoo! Your claim was verified and the listing is officially yours!
+            </div>
+          <% } else { %>
+            <div class="alert alert-info" role="alert">
+              Business proof submitted. Be right back once we review them!   
+            </div>
+          <% } %>
+        <% } %>
+      <% } %>
+
+
+      <h2><%= school.title %></h2>
+      <div class="d-flex align-items-center">
+        <div class="starability-result" data-rating="<%= Math.ceil(school.totalRating) %>">
+          Rated: <%= school.totalRating %> stars
+        </div> 
+        <div class="reviews-total">(<%= school.reviews.length %>)</div>
+        <div><strong><%= school.price.value%> <%= school.price.currency %></strong> a month</div>
+      </div>
+
+
+      <!-- Categories -->
+      <div class="pb-3">
+        <% for (const category of school.category) { %>
+        <span class="badge bg-success"><%= category %></span>
+        <% } %>
+      </div>
+
+      <!-- Images -->
+      <div class="pt-1 pb-4">
+        <div class="show__image-container row mb-1">
+
+          <% if (school.images.length > 3) { %>
+            <a href="<%= school.images[0].url%>" data-toggle="lightbox" data-gallery="example-gallery">
+              <div class="show__image-counter"><i class="fa-solid fa-camera"></i> All photos (<%= school.images.length %>)</div>
+            </a>
+          <% } %>
+          <% school.images.forEach((img, i) => { %>
+            <a href="<%= img.url %>" class="show__image col <%= i > 2 ? 'hide' : ''%>" data-toggle="lightbox" data-gallery="example-gallery">
+              <img src="<%= img.url %>">
+            </a>
+
+          <% }) %>
+
+          <% if (!school.images.length) { %>
+            <div class="show__image col">
+              <img src="/images/no-image.jpeg" alt="">
+            </div>
+
+            <div class="show__image col">
+              <img src="/images/no-image.jpeg" alt="">
+            </div>
+
+            <div class="show__image col">
+              <img src="/images/no-image.jpeg" alt="">
+            </div>
+          <% } %>
+
+          <% if (school.images.length == 1) { %>
+            <div class="show__image col">
+              <img src="/images/no-image.jpeg" alt="">
+            </div>
+
+            <div class="show__image col">
+              <img src="/images/no-image.jpeg" alt="">
+            </div>
+          <% } %>
+
+          <% if (school.images.length == 2) { %>
+            <div class="show__image col">
+              <img src="/images/no-image.jpeg" alt="">
+            </div>
+          <% } %>
+        </div>
+
+        <% if (currentUser && (school.owner && school.owner._id.toString() == currentUser._id.toString())) { %>
+        <div>
+          <small>Get unlimited photo uploads and more benefits by signing up for <strong><i class="bi bi-star-fill"></i> Premium</strong>! (<a class="text-decoration-none" href="https://mailchi.mp/88a059d48922/preschoolfinder" target="_blank">join the wailist</a>)</small>
+        </div>
+        <% } %>
+
+      </div>
+
+      <!-- Amenities -->
+      <div class="pb-3">
+        <% for (const amenity of school.amenities) { %>
+        <span class="badge bg-light text-dark"><%= amenity %></span>
+        <% } %>
+      </div>
+
+      <!-- Description -->
+      <p class="card-text"><%= school.description %></p>
+      
+      <!-- Add Review -->
+      <% if (currentUser && !(school.owner && school.owner._id.toString() == currentUser._id.toString())) { %>
+        <a href="/school/<%= school._id %>/review" class="btn btn-outline-primary"><i class="fa-solid fa-pencil"></i> Add Review</a>
+      <% } %>
+
+      <!-- Add photos -->
+      <% if ((currentUser && school.author.equals(currentUser)) || (currentUser && (currentUser.isAdmin))) { %>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#modal-photo-edit" class="btn btn-outline-primary"><i class="fa-solid fa-image pe-1"></i> Add Photos</button>
+      <% } %>
+
+      <div class="mt-4">
+      <% if (school.reviews && school.reviews.length > 0) { %>
+        <% for (const review of school.reviews) { %>
+          <div class="card mb-2">
+              <!-- <div class="card-header d-flex align-items-center mb-2">
+                <div class="review-profile-pic-container"><img src="<%= review.author.profileImage.url ? review.author.profileImage.url : '/images/user/blank-profile-picture.webp'%>"></div>
+                <div class="ms-3"><%= review.author.username %></div>
+              </div> -->
+
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <div class="starability-result" data-rating="<%= review.rating %>">
+                      Rated: <%= review.rating %> stars
+                    </div>
+                    
+                  </div>
+                  <div class="d-flex">
+                    <% if (currentUser && currentUser.username === review.author.username) { %>
+                    <div>
+                      <a href="/school/<%= school._id %>/review/<%= review._id %>" class="btn btn-sm btn-light me-1">Edit review</a>
+                    </div>
+                    <% } %>
+                    <div>
+                      <% if (currentUser && currentUser.username === review.author.username) { %>
+                        <form action="/school/<%= school._id %>/review/<%= review._id %>?_method=DELETE" method="POST">
+                          <button class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  
+                </div>
+                <a target="_blank" class="text-decoration-none" href="/user/<%= review.author._id %>"><small class="text-muted">by <%= review.author.username %></small></a>
+                <div class="text-muted review-date-container"><span class="review-date"><%= (review.updatedAt == review.createdAt) ? review.createdAt : review.updatedAt %></span> <span><%= review.updatedAt.toLocaleString() === review.createdAt.toLocaleString() ? '' : '(edited)' %></span></div>
+                <h5 class="card-title mb-0 mt-2"><%= review.title %></h5>
+                <p class="card-text"><%= review.body %></p>
+                <% if ((review.pros[0] != '') || (review.cons[0] != '')) { %>
+                <div class="row">
+                  <div class="col">
+                    <strong>Pros:</strong>
+                    <% for (const pro of review.pros) { %>
+                     <small class="d-block"><%= pro %></small>
+                    <% } %>
+                  </div>
+                  <div class="col">
+                    <strong>Cons:</strong>
+                    <% for (const con of review.cons) { %>
+                      <small class="d-block"><%= con %></small>
+                    <% } %>
+                  </div>
+                </div>
+                <% } %>
+
+
+        
+              </div>
+          </div>
+        <% } %>
+      <% }%>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-lg-4">
+      <div class="pt-4 pb-4">
+
+        <!-- Tier button -->
+        <% if (currentUser && school.owner && (school.owner.toString() === currentUser._id.toString())) { %>
+          <a class="text-decoration-none" href="https://mailchi.mp/88a059d48922/preschoolfinder" target="_blank"><div class="d-flex justify-content-center align-items-center mb-2 tier-btn"><i class="fa-solid fa-star hide"></i> <strong><span>Free tier</span></strong></div></a>
+        <% } else { %>
+          <div class="d-flex justify-content-center align-items-center mb-2 btn btn-light btn-outline"><strong><span>Free tier</span></strong></div>
+        <% } %>
+          
+          <div class="school__map">
+              <div class="center-map-btn hide">Center</div>
+            <!-- <a href="https://www.google.com.my/maps?q=<%= school.geometry.coordinates[1] %>,<%=school.geometry.coordinates[0] %>" target="_blank"> -->
+              <div data-coordinates="<%= school.geometry.coordinates %>" id="map"></div>
+            <!-- </a> -->
+          </div>
+          <!-- <img class="school__map" src="/images/no-image.jpeg"> -->
+
+      </div>
+
+      <div class="pt-2 d-flex">
+        <div class="icon-container"><i class="fa-solid fa-location-pin"></i></div>
+        <p class="ps-3 mb-2"><%= school.context.fullAddress %> </p>
+      </div>
+      <% if (school.contact.phone) { %>
+      <div class="d-flex">
+        <div class="icon-container"><i class="fa-solid fa-phone"></i></div>
+        <a href=""><p class="ps-3 mb-2"><%= school.contact.phone %></p></a>
+      </div>
+      <% } %>
+      <% if (school.contact.www) { %>
+        <div class="d-flex">
+          <div class="icon-container"><i class="fa-solid fa-link"></i></div>
+          <a href="<%= school.contact.www %>" target="_blank"><p class="ps-3 mb-2"><%= school.contact.www %></p></a>
+        </div>
+      <% } %>
+      <% if (school.contact.ig) { %>
+        <div class="d-flex">
+          <div class="icon-container"><i class="fa-brands fa-instagram"></i></div> 
+          <a href="https://instagram.com/<%= school.contact.ig %>" target="_blank"><p class="ps-3 mb-2">Instagram</p></a>
+        </div>
+      <% } %>
+      <% if (school.contact.fb) { %>
+        <div class="d-flex">
+          <div class="icon-container"><i class="fa-brands fa-square-facebook"></i></div>
+          <a href="https://facebook.com/<%= school.contact.fb %>" target="_blank"><p class="ps-3 mb-2">Facebook</p></a>
+        </div>
+      <% } %>
+
+      <!-- Section divider -->
+      <hr class="mb-2">
+
+      <!-- Last updated -->
+      <p class="">
+        <i class="fa-solid fa-arrows-rotate"></i> <small class="text-muted">Last updated <span class="date-update"></span></small>
+      </p>
+      <p class="">
+        <% let user = school.ownership.find(u => u.verified === true)  %>
+        <% if (user) { %> 
+          <i class="fa-solid fa-briefcase"></i> Owner: <a href="/user/<%= user.owner._id %>"><%= user.owner.username %></a>
+          <img src="/images/icons/checked.png" data-bs-toggle="tooltip" data-bs-placement="top" title="User provided Proof of Ownership such as utility bill or rental agreement">
+        <% } else { %>
+          <i class="fa-solid fa-briefcase"></i> Are you the Owner? <a href="/school/<%= school._id %>/claim"><strong>Claim your business.</strong></a>
+        <% } %>
+      </p>
+      <p class="">
+        <i class="fa-regular fa-user"></i> Added by <a href="/user/<%= school.author._id %>"><%= school.author.username %></a> on <span class="school__dateAdded"><%= school.createdAt %></span> 
+      </p>
+        
+      
+
+      <!-- ADMIN panel -->
+      <% if (currentUser && (currentUser.isAdmin)) { %>
+        <hr class="mb-2">
+        <p><i class="fa-solid fa-screwdriver-wrench"></i> <strong>Admin panel</strong></p>
+        
+
+        <% if (!school.ownership.length) { %>
+            <div class="bg-light p-4 mb-2 text-center">
+              No claims uploaded.
+            </div>
+        <% } %> 
+
+        <!-- Uploaded proofs -->
+        <% for (let i = 0; i < school.ownership.length; i++) { %>
+          <div class="claim-container mb-2">
+         
+
+            <!-- Delete Claim -->
+            <form action="/school/<%= school._id %>/deleteclaim/<%= school.ownership[i].owner._id %>" method="POST" enctype="multipart/form-data">
+              <div class="d-flex justify-content-between">
+                <small class="d-block mb-1">Documents submitted by <a href="/user/<%= school.ownership[i].owner._id %>" target="_blank"><%= school.ownership[i].owner.username %></a></small>
+                <% if (school.ownership[i].verified != true) { %>
+                  <button class="btn btn-danger btn-sm" type="submit"><i class="fa-solid fa-trash"></i></button>
+                <% } %>
+              </div>
+                  
+              <div class="row mb-2">
+                <% for (const img of school.ownership[i].businessProof) { %>
+                  <div class="col-4">
+                    <a href="<%= img.url %>" data-toggle="lightbox" data-gallery="proof-gallery-<%= i %>">
+                      <img class="w-100" src="<%= img.url %>">
+                      <input type="hidden" name="deleteImages[]" value="<%= img.filename %>">
+                    </a>
+                  </div>
+                <% } %>
+              </div>
+            </form>
+
+            <!-- Verify ownership -->
+            <form class="" action="/school/<%= school._id %>/verifyowner/<%= school.ownership[i].owner._id %>" method="POST">
+              <div class="control-row">
+                <div class="d-flex justify-content-between align-items-center">
+                  <!-- Owner switch -->
+                  <div class="form-check form-switch">
+                    <input class="form-check-input verify-switch" type="checkbox" id="owner-verified-[<%= i %>]" name="verified" <%= school.ownership[i].verified ? 'checked' : '' %>>
+                    <!-- <input class="form-check-input" type="checkbox" id="owner-verified" name="school[ownership][verified]"> -->
+                    <label class="form-check-label" for="owner-verified-[<%= i %>]">Owner verified</label>
+                  </div>
+                  <div class="form-check mail-notification hide">
+                    <label class="form-check-label" for="mail-notification-<%= i %>">Notify user via mail?</label>
+                    <input type="checkbox" class="form-check-input" id="mail-notification-<%= i %>" name="mailNotification">
+                  </div>
+                </div>
+                <div class="confirm-btn hide text-end pt-1">
+                  <button type="submit" class="btn btn-primary btn-sm">Confirm</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        <% } %>
+      <% } %>
+
+      <!-- Edit/Delete -->
+      <% if (((currentUser) && ((school.owner != null) && school.owner.toString() === currentUser._id.toString())) || (currentUser && (currentUser.isAdmin))) { %> 
+        <hr class="mb-2">
+        <div class="d-grid">
+          <a href="/school/<%= school._id %>/edit" class="btn btn-light">Edit</a>
+          <div>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal">Delete School</button>
+          </div>
+        </div>
+      <% } %>
+
+
+
+    </div>
+  </div>
+
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="delete-confirmation-modal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="delete-confirmation-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"><span class="fw-light">Are you sure you want to</span> delete this school?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <!-- <div class="modal-body">
+          All related data will be removed for good! :'(
+        </div> -->
+        <div class="p-2 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep school</button>
+              <form action="/school/<%= school._id %>?_method=DELETE" method="POST">
+                  <button type="submit" class="btn btn-danger delete-confirmation">Delete School</button>
+              </form>
+
+        </div>
+        <!-- <div class="modal-footer">
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+
+<!-- Modal - PHOTO -->
+<form action="/school/<%= school._id %>/images" method="POST" enctype="multipart/form-data">
+  <div class="modal fade" id="modal-photo-edit">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+            <div class="d-flex justify-content-between">
+                <h5 class="modal-title">Edit Photo</h5>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">          
+            <!-- DELETE IMAGES -->
+            <% school.images.forEach((img,i) => { %>
+              <div class="col-4 gx-1 gy-1">
+                <div class="position-relative">
+                  <div class="form-check img-check">
+                    <input type="checkbox" name="deleteImages[]" value="<%= img.filename %>" id="img-<%= i %>" class="form-check-input">
+                  </div>
+                  <label for="img-<%= i %>" class="preview-container">
+                      <img src="<%= img.url %>" class="w-100">
+                  </label>
+                </div>
+              </div>
+            <% }) %>
+
+            <!-- Image placeholder for free user -->
+            <% if (school.images.length < 3) { %>
+              <div class="col-4 gx-1 gy-1">
+                <label class="preview-container">
+                  <img src="/images/no-image.jpeg" class="w-100">
+                </label>
+              </div>
+              <div class="gx-1 pt-1">
+                <small class="text-muted"><i class="bi bi-image-fill"></i> <%= 3 - school.images.length %> photo <%= school.images.length == 2 ? 'upload' : 'uploads' %> left in your <strong>Free Tier</strong></small>
+              </div>
+            <% } else { %>
+              <div class="gx-1 pt-1">
+                <small class="text-muted">You reached your image upload limit. Please, upgrade to <a href="https://mailchi.mp/88a059d48922/preschoolfinder" target="_blank"><strong><i class="bi bi-star-fill"></i> Premium Tier</strong></a> for unlimited uploads and other benefits.</small>
+              </div>
+            <% } %>
+
+
+          </div>
+        </div>
+
+        <!-- UPLOAD MORE IMAGES -->
+        <% if (school.tier === 'free' && school.images.length < 3) { %>
+          <div class="mb-3 p-2 d-flex position-relative"> 
+            <button id="remove-image-btn" class="hide" type="button"><i class="fa-solid fa-circle-xmark"></i> Remove</button>
+            <input class="form-control custom-file" type="file" name="image" id="image-upload" multiple>
+          </div>
+          <% } %>
+          <div class="modal-footer">
+            <span id="info-text"></span>
+            <button type="submit" id="upload-btn" class="btn btn-success hide">Upload</button>
+          </div>
+
+
+      </div>
+    </div>
+  </div>
+</form>
+             
+
+        
+<script src="/js/imageUpload.js"></script>
+<script src="/js/bsFormValidation.js"></script>
+
+<script>
+  // when was the listing last time updated
+  function lastUpdate() {
+      const school = <%- JSON.stringify(school) %>;
+      const lastUpdate = document.querySelector('.date-update');
+
+      const date = new Date(school.updatedAt);
+      const today = new Date(Date.now());
+      const sub = new Date(today - date).getDate();
+
+      if (sub <= 1) {
+          lastUpdate.textContent = 'Today';
+      }
+
+      if (sub > 1) {
+          lastUpdate.textContent = 'Yesterday';
+      }
+
+      if (sub > 2) {
+          lastUpdate.textContent = `${sub} days ago`;
+      }
+  }
+  lastUpdate();
+
+  function dateCreated() {
+    // when was listing created - format date
+    const date = document.querySelector('.school__dateAdded');
+    const newDate = new Date(date.textContent);
+    const parsedDate = newDate.toLocaleDateString({}, {
+      timeZone: "UTC", month: "long", day: "2-digit", year: "numeric"
+    })
+    // console.log(parsedDate)
+    date.textContent = parsedDate;
+  }
+  dateCreated()
+
+  const reviewDates = document.querySelectorAll('.review-date');
+  reviewDates.forEach(date => {
+    const newDate = new Date(date.textContent);
+    const parsed = newDate.toLocaleDateString({}, {
+      timeZone: "UTC", month: "long", day: "2-digit", year: "numeric"
+    })
+    date.textContent = parsed;
+  })
+
+</script>
+
+<script>
+  const options = {
+    keyboard: true,
+    size: 'fullscreen'
+  };
+
+  document.querySelectorAll('.my-lightbox-toggle').forEach((el) => el.addEventListener('click', (e) => {
+	  e.preventDefault();
+	  const lightbox = new Lightbox(el, options);
+	  lightbox.show();
+  }));
+</script>
+
+
+<!-- Validate stars -->
+<!-- <script>
+const reviewForm = document.querySelector('#review-form');
+const validFeedback = document.querySelector('.review-valid-feedback');
+const invalidFeedback = document.querySelector('.review-invalid-feedback');
+const submitReviewBtn = document.querySelector('#submit-review');
+
+submitReviewBtn.addEventListener('click', (e) => {
+  const noRate = document.querySelector('#no-rate');
+  if (noRate.checked == true) {
+    invalidFeedback.style.display = 'block';
+    validFeedback.style.display = 'none';
+    noRate.setCustomValidity('invalid')
+    reviewForm.preventDefault();
+  } else {
+    invalidFeedback.style.display = 'none';
+    validFeedback.style.display = 'block';
+    noRate.setCustomValidity('')
+  }
+
+})
+</script> -->
+
+<!-- Leaflet Map init -->
+<script>
+  let schoolCoordinates = document.querySelector('#map').dataset.coordinates.split(',').map(Number);
+  
+  // Note: Mapbox that is originally used to get coordinates, uses format Latitude/Longitude
+  // But Leaflet uses inverted format, Longitude/Latitude. That needs to be taken into account
+  const parsedCoords = [schoolCoordinates[1], schoolCoordinates[0]]
+
+  let map = L.map('map', {
+    zoomControl: false
+  }).setView(parsedCoords, 16) 
+
+  let marker = L.marker(parsedCoords).addTo(map);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 17,
+    minZoom: 14,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  const centerMapBtn = document.querySelector('.center-map-btn');  
+  centerMapBtn.addEventListener('click', () => {
+    map.setView(parsedCoords, 16)
+    setTimeout(() => {
+      centerMapBtn.classList.add('hide');
+    }, 300)
+  })
+
+  map.on('move', function() {
+    centerMapBtn.classList.remove('hide')
+  })
+
+
+
+
+</script>
+
+<script>
+  // ADMIN PANEL
+  // Verify Owner Switch - only one can be active
+  const verifySwitches = document.querySelectorAll('.verify-switch');
+  verifySwitches.forEach(el => {
+    el.addEventListener('change', (e) => {
+      const confirmBtn = el.closest('.control-row').querySelector('.confirm-btn');
+      const confirmBtns = document.querySelectorAll('.confirm-btn');
+      const emailCheck = el.closest('.control-row').querySelector('.mail-notification');
+      const emailChecks = document.querySelectorAll('.mail-notification');
+      confirmBtns.forEach(el => el.classList.remove('show'));
+      confirmBtn.classList.add('show');
+      emailCheck.classList.remove('hide');
+      if (e.target.checked === true) {
+        verifySwitches.forEach(other => { other.checked = false })
+        emailChecks.forEach(other => { other.querySelector('.form-check-input').checked = false; other.classList.add('hide');})
+        e.target.checked = true;
+        emailCheck.classList.add('show')
+      } else {
+        emailCheck.classList.remove('show');
+        emailCheck.classList.add('hide');
+        emailCheck.querySelector('.form-check-input').checked = false;
+      }
+    })
+  })
+
+  
+</script>
+
+<script>
+  const uploadPhotoBtn = document.querySelector('#upload-btn');
+
+  uploadPhotoBtn.addEventListener('click', () => {
+    showSpinner()
+  })
+</script>
+
+
+<script>
+  const tierBtn = document.querySelector('.tier-btn');
+  
+  if (tierBtn) {
+    tierBtn.addEventListener('mouseenter', (e) => {
+      e.target.children[0].classList.remove('hide');
+      e.target.children[1].textContent = `Upgrade to Premium (join the wailist)`
+    })
+  
+    tierBtn.addEventListener('mouseleave', (e) => {
+      e.target.children[0].classList.add('hide');
+      e.target.children[1].textContent = 'Free Tier'
+    })
+  }
+
+</script>

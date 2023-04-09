@@ -1,0 +1,39 @@
+<% layout('layouts/boilerplate')%>
+
+<form action="/user/reset/<%= token %>" method="POST" class="needs-validation" novalidate>
+    <div class="form-container ms-3 me-3">
+
+        <div class="col-sm-12 col-md-6 m-auto col-lg-5 mt-3 form-card">
+            <!-- <h1>Sign Up</h1> -->
+            <!-- Header image -->
+            <div class="img d-flex justify-content-center align-items-center">
+                <div class="text-center text-white p-4">
+                  <h3 class="text-uppercase mb-0">Password Reset</h3>
+                  <!-- <p class="fw-light mb-1">Please enter the emaill address used to register your account, and we will email you instructions to reset password.</p> -->
+                </div>
+            </div>
+            <!-- Form Content -->
+            <div class="p-3">
+    
+                <div class="mb-3">
+                    <input required class="form-control" type="password" name="password" placeholder="Your new password">
+                    <!-- <div class="invalid-feedback">
+                        Please, type a valid email address
+                    </div> -->
+                </div>
+
+                <div class="mb-3">
+                    <input required class="form-control" type="password" name="confirm" placeholder="Confirm your password">
+                    <!-- <div class="invalid-feedback">
+                        Please, type a valid email address
+                    </div> -->
+                </div>
+    
+                <div class="d-grid mb-3">
+                    <button class="btn btn-success d-grid">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

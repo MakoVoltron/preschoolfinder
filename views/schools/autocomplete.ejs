@@ -1,0 +1,114 @@
+<% layout('layouts/boilerplate') %>
+
+
+
+
+
+
+<div class="row">
+    <div class="col-6 offset-3 text-center">
+        <h1>Hi from autocomplete</h1>
+        <input class="form-control" id="autocomplete" type="text">
+        <div id="details"></div>
+    </div>
+</div>
+
+<div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+
+<script>
+    let autocomplete;
+    let defaultBounds = {};
+
+    
+
+
+
+    // function initAutocomplete() {
+
+    //     const options = {
+    //         types: ['school'],
+    //         componentRestrictions: {'country': ['cz']},
+    //         fields: ['place_id', 'name', 'geometry', 'formatted_address', 'website'],
+    //         bounds: defaultBounds,
+    //         strictBounds: false // make sure to change to true once implementing 'bounds' parameter
+    //     }
+
+    //     // function createAutocomplete() {
+    //     autocomplete = new google.maps.places.Autocomplete(
+    //         document.getElementById('autocomplete'),
+    //         options
+    //     );
+    //     autocomplete.addListener('place_changed', onPlaceChanged);
+    // }
+
+    // function onPlaceChanged() {
+    //     let place = autocomplete.getPlace();
+    //     let latitude = place.geometry.location.lat();
+    //     let longitude = place.geometry.location.lng();
+
+    //     if (!place.geometry) {
+    //         // User did not select prediction. Reset input field
+    //         document.getElementById('autocomplete').placeholder = 'Enter a place';
+    //     } else {
+    //         // Display details about valid place
+    //         document.getElementById('details').innerHTML = `
+    //             ${place.name} 
+    //             <br> 
+    //             ${place.formatted_address}
+    //             <br>
+    //             PlaceID: ${place.place_id}
+    //             <br>
+    //             Lat: ${latitude} | Long: ${longitude}
+    //             `;
+    //         console.log(place)
+    //     }
+    // }
+
+    // // get user location, create bounds, then initialize autocomplete with defined bounds
+    // const getUserCoordinates = (callback) => {
+    //     // show loading spinner
+        
+    //     // get coordinates
+    //     function success(pos) {
+
+    //         // 
+    //         const crd = pos.coords;
+    //         const distance = 0.05 // 0.05 equals 5km 
+    //         defaultBounds.north = crd.latitude + distance;
+    //         defaultBounds.south = crd.latitude - distance;
+    //         defaultBounds.east = crd.longitude + distance;
+    //         defaultBounds.west = crd.longitude - distance;
+
+    //         // hide spinner
+    //         document.querySelector('.spinner-border').classList.add('hide');
+
+    //         callback();
+    //     }
+
+    //     function error(err) {
+    //         console.warn(`ERROR(${err.code}): ${err.message}`);
+    //     }
+
+    //     navigator.geolocation.getCurrentPosition(success, error)
+    // }
+
+    // // this function compilation is called by Google Maps script that requires callback 
+    // function callbackFunc() {
+        // getUserCoordinates(initAutocompleteService);
+        // getUserCoordinates(initAutocomplete);
+    // }
+
+    // function dummyCallback() {
+    //     console.log('dummy')
+    // }
+
+</script>
+
+
+
+<!-- <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcyfjKf470fXkIpckMkfumveGOU2X7Ao8&libraries=places&callback=callbackFunc">
+    // src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcyfjKf470fXkIpckMkfumveGOU2X7Ao8&libraries=places&callback=initAutocomplete">
+</script> -->

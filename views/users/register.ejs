@@ -1,0 +1,70 @@
+<% layout('layouts/boilerplate')%>
+
+
+
+<form action="/user/register" method="POST" class="needs-validation" novalidate>
+    <div class="form-container ms-3 me-3">
+
+        <div class="col-sm-12 col-md-6 m-auto col-lg-5 mt-3 form-card">
+            <!-- <h1>Sign Up</h1> -->
+            <!-- Header image -->
+            <div class="img d-flex align-items-center">
+                <div class="text-center text-white p-4">
+                  <h3 class="text-uppercase mb-0">Sign Up</h3>
+                  <p class="fw-light mb-1">Join our community of parents to <span class="fw-bold">SEARCH</span>, <span class="fw-bold">ADD</span> and <span class="fw-bold">REVIEW</span> Preschools in your town.</p>
+                  <span class="badge bg-light text-dark">Completely FREE!</span>
+                </div>
+            </div>
+            <!-- Form Content -->
+            <div class="p-3">
+                <div class="mb-3">
+                    <a href="/auth/facebook"></a>
+                </div>
+    
+                <div class="mb-3">
+                    <input required class="form-control" type="text" name="username" placeholder="Jane Doe">
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please, choose a username.
+                    </div>
+                </div>
+    
+                <div class="mb-3">
+                    <input required class="form-control" type="email" name="email" placeholder="Email">
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please, type your email.
+                    </div>
+                </div>
+    
+                <div class="row mb-3">
+                    <div class="col">
+                        <input required class="form-control" type="password" id="password-form" name="password" placeholder="Password">
+                        <div class="password-form-feedback"></div>
+                        <div class="invalid-feedback">
+                            Please, choose a strong password.
+                        </div>
+                    </div>
+                    <div class="col">
+                        <input required class="form-control" type="password" id="password-form-confirm" name="passwordConfirm" placeholder="Confirm Password">
+                        <div class="password-form-confirm-feedback"></div>
+                    </div>
+                </div>
+    
+                <div class="d-grid">
+                    <button class="btn btn-success d-grid">Register</button>
+                </div>
+                <div class="mt-2 text-end">
+                    <small>Already registered? <a href="/user/login"><strong>Log In <i class="fa-solid fa-user"></i></strong></a> here!</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="/js/passwordCheckForm.js"></script>
+

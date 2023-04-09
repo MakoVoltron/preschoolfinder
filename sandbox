@@ -1,0 +1,118 @@
+https://www.happycow.net/searchmap?
+
+s=3
+&location=Ubud%2C+Bali%2C+Indonesia
+&metric=mi
+&limit=81
+&order=default
+&lat=-8.49773
+&lng=115.263
+&zoom=11
+&page=1
+
+
+
+
+
+col-10 offset-1
+
+ <%- include('../partials/flash') %>
+                <% if (currentUser) { %>
+                    <% if (currentUser.username === user.username) { %>
+                    <form action="/user/<%= user._id %>/update" method="POST">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" name="username" placeholder="Username" aria-label="Username" value="<%= user.username %>">
+                        </div>
+            
+                        <% if (user.email.length > 1) { %>
+                                <div class="input-group mb-3 d-flex">
+                                    <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
+                                    <input id="email" type="text" name="email" class="form-control" placeholder="Email" aria-label="Email" value="<%= user.email %>">
+                                    <% if (user.email === 'no-email-added') { %>
+                                        <span class="input-alert email"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                                    <% } %>
+
+                                </div>
+
+                        <% } %>
+                        
+                        <button type="submit" class="btn btn-warning btn-sm">Update</button>
+                    </form>
+                    <% } %>
+                <% } else { %>
+                    <h5><%= user.username %></h5>
+                    <h5><%= user.email %></h5>
+                <% } %>
+
+
+
+
+
+
+                <div class="mt-4 mb-3">
+                    <h2>Leave a review!</h2>
+                    <form id="review-form" action="/school/<%= school._id %>/review" novalidate class="needs-validation" method="POST">
+                      <div class="mb-3">
+                        <!-- <label class="form-label" for="rating">Rating</label> -->
+                        <fieldset class="starability-basic">
+                          <!-- <legend>First rating:</legend> -->
+                          <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                          <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                          <label for="first-rate1" title="Terrible">1 star</label>
+                          <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                          <label for="first-rate2" title="Not good">2 stars</label>
+                          <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                          <label for="first-rate3" title="Average">3 stars</label>
+                          <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                          <label for="first-rate4" title="Very good">4 stars</label>
+                          <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                          <label for="first-rate5" title="Amazing">5 stars</label>
+                        </fieldset>
+                        <div class="invalid-feedback review-invalid-feedback">
+                          You need to rate the school before submitting your review!
+                        </div>
+                        <div class="valid-feedback review-valid-feedback">
+                          Looks good!
+                        </div>
+                        <!-- <input class="form-range" type="range" name="review[rating]" min="1" max="5" id="rating"> -->
+                      </div>
+                      <div class="mb-3">
+                        <!-- <label class="form-label" for="review-body">Review:</label> -->
+                        <div class="mb-2">
+                          <input class="form-control" placeholder="Title" name="review[title]" required>
+                          <div class="invalid-feedback">
+                            Choose descriptive title for your review!
+                          </div>
+                          <div class="valid-feedback">
+                            Looks good!
+                          </div>
+                        </div>
+                        <div class="mb-2">
+                          <textarea class="form-control" name="review[body]" id="review-body" rows="2" required placeholder="Main text"></textarea>
+                          <div class="valid-feedback">
+                            Looks good!
+                          </div>
+                          <div class="invalid-feedback">
+                            You can't leave review text empty!
+                          </div>
+                        </div>
+            
+                        <div class="row gx-2">
+                          <label class="form-label"><strong>Pros & Cons</strong></label>
+                          <div class="col">
+                            <input class="form-control mb-2" name="review[pros]" placeholder="I really liked...">
+                            <input class="form-control mb-2" name="review[pros]" placeholder="Also liked...">
+                            <input class="form-control mb-2" name="review[pros]" placeholder="And also liked...">
+                          </div>
+                          <div class="col">
+                            <input class="form-control mb-2" name="review[cons]" placeholder="Disliked...">
+                            <input class="form-control mb-2" name="review[cons]" placeholder="Also disliked...">
+                            <input class="form-control mb-2" name="review[cons]" placeholder="And finally disliked...">
+                          </div>
+            
+                        </div>
+            
+                      </div>
+                      <button id="submit-review" type="submit" class="btn btn-success">Submit</button>
+                    </form>
+                  </div>

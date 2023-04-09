@@ -1,0 +1,112 @@
+<% layout('layouts/boilerplate') %>
+<link rel="stylesheet" href="/css/stars.css">
+
+<div class="col-6 offset-3 mt-4 mb-3">
+    <div class="d-flex justify-content-between">
+      <h2>Write your review</h2>
+      <div>
+        <a href="/school/<%= school._id %>"><button type="button" class="btn-close float-end pt-4 pe-1" aria-label="Close"></button></a>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+          <a href="/school/<%= school._id %>" class="text-decoration-none"><h5 class="card-title"><%= school.title %></h5></a>
+          <h6 class="card-subtitle mb-2 text-muted"><%= school.context.fullAddress %></h6>
+          <div class="d-flex align-items-center">
+              <div class="starability-result" data-rating="<%= school.totalRating %>">
+                Rated: <%= school.totalRating %> stars
+              </div> 
+              <div style='margin-left: -20px' class="reviews-total">(<%= school.reviews.length %>)</div>
+              <!-- <div><%= school.reviews.length %> reviews total</div> -->
+          </div>
+        </div>
+    </div>
+
+    <form id="review-form" action="/school/<%= school._id %>/review/" novalidate class="needs-validation" method="POST">
+      <div class="mb-3">
+        <fieldset class="starability-basic">
+          <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+          <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+          <label for="first-rate1" title="Terrible">1 star</label>
+          <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+          <label for="first-rate2" title="Not good">2 stars</label>
+          <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+          <label for="first-rate3" title="Average">3 stars</label>
+          <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+          <label for="first-rate4" title="Very good">4 stars</label>
+          <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+          <label for="first-rate5" title="Amazing">5 stars</label>
+        </fieldset>
+        <div class="invalid-feedback review-invalid-feedback">
+          You need to rate the school before submitting your review!
+        </div>
+        <div class="valid-feedback review-valid-feedback">
+          Looks good!
+        </div>
+        <!-- <input class="form-range" type="range" name="review[rating]" min="1" max="5" id="rating"> -->
+      </div>
+      <div class="mb-3">
+        <!-- <label class="form-label" for="review-body">Review:</label> -->
+        <div class="mb-2">
+          <input class="form-control" placeholder="Title" name="review[title]" required>
+          <div class="invalid-feedback">
+            Choose descriptive title for your review!
+          </div>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+        </div>
+        <div class="mb-2">
+          <textarea class="form-control" name="review[body]" id="review-body" rows="2" required placeholder="Main text"></textarea>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">
+            You can't leave review text empty!
+          </div>
+        </div>
+
+        <div class="row gx-2">
+          <label class="form-label"><strong>Pros & Cons</strong></label>
+          <div class="col">
+            <input class="form-control mb-2" name="review[pros]" placeholder="I really liked...">
+            <input class="form-control mb-2" name="review[pros]" placeholder="Also liked...">
+            <input class="form-control mb-2" name="review[pros]" placeholder="And also liked...">
+          </div>
+          <div class="col">
+            <input class="form-control mb-2" name="review[cons]" placeholder="Disliked...">
+            <input class="form-control mb-2" name="review[cons]" placeholder="Also disliked...">
+            <input class="form-control mb-2" name="review[cons]" placeholder="And finally disliked...">
+          </div>
+
+        </div>
+
+      </div>
+      <button id="submit-review" type="submit" class="btn btn-success">Submit</button>
+    </form>
+  </div>
+
+
+<!-- Validate stars -->
+<script>
+    const reviewForm = document.querySelector('#review-form');
+    const validFeedback = document.querySelector('.review-valid-feedback');
+    const invalidFeedback = document.querySelector('.review-invalid-feedback');
+    const submitReviewBtn = document.querySelector('#submit-review');
+    
+    submitReviewBtn.addEventListener('click', (e) => {
+      const noRate = document.querySelector('#no-rate');
+      if (noRate.checked == true) {
+        invalidFeedback.style.display = 'block';
+        validFeedback.style.display = 'none';
+        noRate.setCustomValidity('invalid')
+        reviewForm.preventDefault();
+      } else {
+        invalidFeedback.style.display = 'none';
+        validFeedback.style.display = 'block';
+        noRate.setCustomValidity('')
+      }
+    
+    })
+</script>

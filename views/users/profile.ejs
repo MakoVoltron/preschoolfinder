@@ -1,0 +1,235 @@
+<% layout('layouts/boilerplate') %>
+
+<link rel="stylesheet" href="/css/homepage.css">
+<link rel="stylesheet" href="/css/profile.css">
+<link rel="stylesheet" href="/css/imageUpload.css">
+
+<!-- <div class="col-10 offset-1 pt-4"> -->
+    <!-- <div class="row">
+        <div class="col-6">
+
+        </div>
+
+    </div> -->
+
+    <div class="d-flex justify-content-center upper-section">
+        <% if (currentUser && currentUser.username === user.username) { %>
+            <div class="profile-pic-container">
+                <!-- <span class="remove-pic"><i class="fa-solid fa-circle-xmark"></i></span> -->
+                <a data-bs-toggle="modal" data-bs-target="#modal-profile-photo">
+                    <div class="profile-overlay"><i class="fa-solid fa-image"></i></div>
+                    <img src="<%= user.profileImage.url != '' ? user.profileImage.url : '/images/user/blank-profile-picture.webp' %>">
+                </a>
+            </div>
+        <% } else { %>
+            <div class="profile-pic-container">
+                <img src="<%= user.profileImage.url != '' ? user.profileImage.url : '/images/user/blank-profile-picture.webp' %>">
+            </div>
+        <% } %>
+
+                
+        <div class="ps-3">
+            <h3><%= user.username %>'s profile</h3>
+                    <form action="/user/<%= user._id %>/update" method="POST">
+                        <div class="input-group mb-2">
+                            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                            <input disabled type="text" class="form-control" name="username" placeholder="Username" aria-label="Username" value="<%= user.username %>">
+                        </div>
+                        
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-location-pin"></i></span>
+                            <input disabled type="text" class="form-control" name="location" placeholder="Location" aria-label="Username" value="<%= user.location %>">
+                        </div>
+
+                        <% if (currentUser) { %>
+                            <% if (user.email.length > 1) { %>
+                                <div>
+                                    <small class="text-secondary">Only you can see your email</small>
+                                    <div class="input-group d-flex">
+                                        <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
+                                        <input disabled id="email" type="text" name="newEmail" class="form-control" placeholder="Email" aria-label="Email" value="<%= user.newEmail ? user.newEmail : user.email %>">
+                    
+                                        <% if (user.email === 'no-email-added') { %>
+                                            <span class="input-alert email"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                                        <% } %>
+
+                                    </div>
+                                    <!-- <% if (!user.isVerified) { %>
+                                        <small class="text-danger">Email is not verified</small>
+                                    <% } %> -->
+                                </div>
+                            <% } %>
+                        <% } %>
+
+
+                   
+                        <!-- Edit button -->
+                        <% if (currentUser) { %>
+                            <% if (currentUser.username === user.username) { %>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <% if (!user.isVerified) { %>
+                                            <small class="text-danger">Email is not verified</small>
+                                        <% } else { %>
+                                            <small class="text-success">Email verified!</small>
+                                        <% } %>
+                                    </div>
+                                    <small><a class="edit-btn">Edit</a></small>
+                                </div>
+                                <div class="pb-2 pt-2 update-btn">
+                                    <button type="submit" class="btn btn-warning btn-sm"><i class="fa-solid fa-check"></i></button>
+                                    <button type="button" class="btn btn-light btn-sm close-btn"><i class="fa-regular fa-circle-xmark"></i></button>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </form>
+                    
+        </div>
+    </div>
+
+<div class="row gx-2">
+    <!-- Schools Owned -->
+    <div class="pb-2">
+        <% if (owned.length > 0) { %>
+            <div class="container-fluid bg-gray">
+                <div class="container pt-2 pb-2 ">
+                    <h5 class="mt-2">Schools owned</h5>
+                    <div class="row">
+                        <% for (const school of owned) { %>
+                            <div class="col-lg-4 col-md-6 col-sm-12 item pb-1">
+                                <a href="/school/<%= school._id %>">
+                                    <figure>
+                                        <% if (school.price.value != null) { %>
+                                            <span class="badge bg-dark price"><%= school.price.currency%><%= school.price.value %> <span>per month</span></span>
+                                        <% } %>
+                                        <img src="<%= school.images.length > 0 ? school.images[0].url : '/images/no-image.jpeg' %>">
+                                    </figure>
+                                    <h6 class="title"><%= school.title %></h6>
+                                </a>
+                                <p class="location"><%= school.city.name %>, <%= school.country.name %></p>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Added schools -->
+    <div class="">
+        <% if (schools.length > 0) { %>
+        <div class="container-fluid bg-gray">
+            <div class="container pt-2 pb-2 ">
+                <h5 class="mt-2">Schools added</h5>
+                <div class="row">
+                    <% for (const school of schools) { %>
+                        <!-- <button class="btn btn-outline-dark m-1"><%= school.title %></button> -->
+                            <div class="col-lg-4 col-md-6 col-sm-12 item pb-1">
+                                <a href="/school/<%= school._id %>">
+                                    <figure>
+                                        <% if (school.price.value != null) { %>
+                                            <span class="badge bg-dark price"><%= school.price.currency%><%= school.price.value %> <span>per month</span></span>
+                                        <% } %>
+                                        <img src="<%= school.images.length > 0 ? school.images[0].url : '/images/no-image.jpeg' %>">
+                                    </figure>
+                                    <h6 class="title"><%= school.title %></h6>
+                                </a>
+                                <p class="location"><%= school.city.name %>, <%= school.country.name %></p>
+                                <!-- <% for (const category of school.category) { %>
+                                    <span class="badge bg-primary"><%= category %></span>
+                                <% } %> -->
+                            <!-- <p class="description"><%= school.description %></p> -->
+                            </div>
+                    
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <% } %>
+    </div>
+</div>
+
+<form action="/user/<%= user._id %>/profilepic" method="POST" enctype="multipart/form-data">
+    <div class="modal fade" id="modal-profile-photo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <div class="d-flex justify-content-between">
+                      <h5 class="modal-title">Update your profile photo</h5>
+                  </div>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row">          
+                    
+                <!-- UPLOAD MORE IMAGES -->
+                <div class="p-2 pb-0 d-flex position-relative">
+                    <button id="remove-image-btn" class="hide" type="button"><i class="fa-solid fa-circle-xmark"></i> Remove</button>
+                    <input class="form-control custom-file" type="file" name="image" id="image-upload">
+                </div>
+                <small class="mb-3 mt-3"><i class="fa-solid fa-circle-exclamation"></i> New profile image will replace the current one.</small>
+                <div class="modal-footer">
+                    <!-- Remove current profile photo -->
+                    <% if (currentUser && currentUser.profileImage.url != '') { %>
+                    <div class="remove-photo">
+                        <input type="checkbox" class="form-check-input" id="remove-photo" name="deleteImage" value="<%= user.profileImage.filename %>">
+                        <label class="form-check-label remove-photo-label" for="remove-photo">Remove profile image</label>
+                        <button type="submit" class="btn btn-sm btn-secondary remove-photo-confirm-btn hide">Confirm</button>
+                    </div>
+                    <% } %>
+                    <span id="info-text"></span>
+                    <button type="submit" id="upload-btn" class="btn btn-success hide">Upload</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script src="/js/imageUploadProfile.js"></script>
+
+<script>
+    const email = document.querySelector('#email');
+    const emailAlert = document.querySelector('.input-alert email');
+    const editBtn = document.querySelector('.edit-btn');
+    const updateBtn = document.querySelector('.update-btn');
+    const closeBtn = document.querySelector('.close-btn');
+    const inputs = document.querySelectorAll('input');
+    const profileContainer = document.querySelector('.profile-pic-container');
+    const profileOverlay = document.querySelector('.profile-overlay');
+  
+
+    // IMAGE UPDATE
+    // check if Overlay exists == if the user is logged in (applies only for owner of the profile)
+    if (profileOverlay) {
+        profileContainer.addEventListener('mouseover', () => {
+            profileOverlay.style.display = 'block';
+        })
+    
+        profileContainer.addEventListener('mouseout', () => {
+            profileOverlay.style.display = 'none';
+        })
+
+        editBtn.addEventListener('click', () => {
+            // remove Disabled from inputs
+            inputs.forEach(inp => {
+                inp.disabled = false;
+            })
+    
+            // replace Edit with Update button
+            editBtn.style.display = 'none';
+            updateBtn.style.display = 'block';
+        })
+    
+        closeBtn.addEventListener('click', () => {
+            editBtn.style.display = 'block';
+            updateBtn.style.display = 'none';
+            inputs.forEach(inp => {
+                inp.disabled = true;
+            })
+        })
+    }
+    
+
+</script>

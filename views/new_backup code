@@ -1,0 +1,109 @@
+    // self-executing function
+    // (function() {
+    //     window.initMap = initMap;
+    // })();
+
+
+    // function geocode(request) {
+    //     // clear();
+    //     geocoder
+    //         .geocode(request)
+    //         .then((result) => {
+    //             const { results } = result;
+
+    //             map.setCenter(results[0].geometry.location);
+    //             marker = new google.maps.Marker()
+    //             marker.setPosition(results[0].geometry.location);
+    //             marker.setMap(map);
+    //             // return results
+    //         })
+    // }
+
+     // function codeAddress() {
+    //     clearMarkers();
+    //     let address = document.getElementById('address').value;
+        
+    //     const componentRestrictions = {
+    //         country: document.getElementById('country').value,
+    //         // 'postalCode': document.getElementById('zip').value,
+    //     } 
+    //     console.log(componentRestrictions)
+
+    //     console.log(address)
+    //     geocoder.geocode( {'address': address, componentRestrictions}, function(results, status) {
+    //         if (status == 'OK') {
+    //             console.log("Latitude: " + results[0].geometry.location.lat())
+    //             console.log("Longitude: " + results[0].geometry.location.lng())
+    //             map.setCenter(results[0].geometry.location);
+    //             map.setZoom(18);
+    //             marker = new google.maps.Marker({
+    //                 map: map,
+    //                 position: results[0].geometry.location
+    //             });
+    //             markersArray.push(marker)
+    //             console.log(results)
+    //         } else {
+    //             alert('Geocode was not successful for the following reason: ' + status);
+    //         }
+    //     })
+    // }
+
+     
+
+    // function initMap() {
+    //     map = new google.maps.Map(document.getElementById("map"), {
+    //         center: { lat: -34.397, lng: 150.644 },
+    //         zoom: 8,
+    //     })
+    // }
+
+
+
+    // console.log(key)
+    // const map = document.querySelector('#gmap_canvas');
+    // let mapSrc = map.getAttribute('src');
+
+    // addressInput.addEventListener('change', function(e) {
+    //     const address = e.target.value;
+    //     console.log(address)
+    //     mapSrc = `https://maps.google.com/maps?q=${address}`
+
+    //     mapContainer.insertAdjacentHTML('beforeend', 
+    //     `
+    //     <div class="mapouter">
+    //         <div class="gmap_canvas">
+    //             <iframe width="100%" height="260" id="gmap_canvas" 
+    //                 src="${mapSrc}" 
+    //                 frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+    //             <a href="https://123movies-to.org"></a>
+    //             <br>
+    //             <style>.mapouter{position:relative;text-align:right;height:260px;width:600px;}</style>
+    //             <a href="https://www.embedgooglemap.net">iframe html generator</a>
+    //             <style>.gmap_canvas {overflow:hidden;background:none!important;height:260px;width:600px;}</style>
+    //         </div>
+    //     </div>
+    //     `)
+    // })
+
+    // console.log(mapSrc)
+
+    <!-- <script>
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const activeCategories = [];
+    for (const btn of categoryBtns) {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault()
+            console.log(e.target)
+            e.target.classList.toggle('active');
+            
+            if (e.target.classList.contains('active')) {
+                console.log('yes')
+                activeCategories.push()
+            } else {
+                console.log('nope')
+            }
+        })
+    }
+</script> -->
+
+

@@ -1,0 +1,553 @@
+<script>
+    function buildQuery(center, zoom) {
+        // store query parameters in a temporary variable
+        let query = [];
+    
+        // const currentUrl = window.location.href;
+        const currentUrl = window.location.search.slice(1);
+        const searchParams = new URLSearchParams(currentUrl);
+        let lat, long;
+    
+        if (center != null) {
+            lat = `lat=${center.lng}`;
+            long = `long=${center.lat}`;
+            query.push(lat);
+            query.push(long);
+        } else {
+            for (const p of searchParams) {
+                if (p.indexOf('lat') > -1) {
+                    lat = `${p[0]}=${p[1]}`;
+                    query.push(lat)
+                }
+                if (p.indexOf('long') > -1) {
+                    long = `${p[0]}=${p[1]}`;
+                    query.push(long)
+                }  
+            }
+        }
+        
+        // loop through userQuery object
+        for (const key in userQuery) {
+            
+            // check if key has a value before constructing url
+            if (userQuery[key] != '') {
+                //encode the keys and values this is most necessary for search inputs 
+                query.push((key) + '=' + (userQuery[key]));
+            }
+        }
+    
+        console.log(query)
+    
+        // construct new URL
+        let new_url = `${window.location.origin}/searchmap` + (query.length ? '?' + query.join('&') : '');
+    
+        console.log(new_url)
+        return (new_url);
+    }
+
+</script>
+
+
+<script>
+     // category filters
+     for (const filter of filters) {
+        // check for active filter from previous session
+        // add them to current 'selected' array
+        if (filter.checked == true) {
+            selected.push(filter.dataset.name)
+        }
+
+        filter.addEventListener('change', (e) => {
+         
+            // check for which filter is active
+            if (e.target.checked == true) {
+                // add selected filter to active filters array (using assigned data-name)
+                selected.push(e.target.dataset.name)
+            } 
+
+            if (e.target.checked == false) {
+                // check if the item is in selected array and remove
+                const index = selected.indexOf(e.target.dataset.name);
+                if (index > -1) {
+                    selected.splice(index, 1);
+                }
+
+                const parsedUserQuery = JSON.parse(localStorage.getItem('userQuery'));
+                const indexInUserQuery = parsedUserQuery.filter.indexOf(e.target.dataset.name);
+                if (indexInUserQuery > -1) {
+                    localStorage.removeItem(e.target.dataset.name)
+                }
+
+            }
+
+            let zoom = map.getZoom();
+            let center = map.getCenter();
+            console.log(selected)
+
+            userQuery['filter'] = [...selected]
+            userQuery['zoom'] = zoom;
+
+            // save user query to local memory
+            localStorage.setItem('userQuery', JSON.stringify(userQuery));
+            
+            // let url = buildQuery(center, zoom);
+            // console.log(url);
+            // window.location.assign(url)
+
+            searchArea(bounds, selected)
+        })
+    }
+</script>
+
+
+
+
+
+const geoNear = [
+  
+{
+    $geoNear: {
+        "near": {
+            "type": "Point",
+            "coordinates": [parseFloat(lat), parseFloat(long)]
+        },
+        "distanceField": "geometry.distance",
+        "spherical": "true",
+        "maxDistance": distance,
+        // "distanceMultiplier": 1000, // to turn default units of meters to km
+        "key": "geometry.coordinates",
+        "query": { "category": { $all: activeFilters }}
+    }
+}
+// { 
+//     $match: {
+     
+//             $expr: {
+//                 $cond: {
+//                     if: {
+//                         activeFilters: { $exists: true }
+//                     },
+//                     then: { "category": { activeFilters } },
+//                     else: {}
+//                 }
+//             }
+//     }
+// }
+]
+
+// const results = await School.aggregate(geoNear).exec();
+
+
+
+
+
+
+// !!!!xxxxxxxx MIGHT NOT USE xxxxxxxx
+    function searchArea(bounds, filters, price) {
+ 
+        const resultFeedback = document.querySelector('.result-feedback')
+        const noResult = document.querySelector('.no-result')
+        const resultCounter = document.querySelector('.count');
+        const area = document.querySelector('.area');
+
+        markerLayer.clearLayers();
+
+
+        
+
+        // API CALL TO DEDICATED MAP SEARCHING ROUTE
+        // setTimeout(() =>{
+        //     showSpinner()
+        // }, 200)
+        // showSpinner()
+        fetch(`/searcharea?bbox=${bounds}&filter=${filters}&minPrice=${price.min}&maxPrice=${price.max}&page=${currentPage}`)
+        
+   
+        .then(res => res.json())
+        .then(data => {
+            // hideSpinner()
+            // Delete previous content of container before adding new
+            list.innerHTML = "";
+
+    
+            // how many results found
+            if (data.length == 0) {
+                resultFeedback.classList.add('hide');
+                noResult.classList.remove('hide');
+            } else {
+                resultFeedback.classList.remove('hide');
+                noResult.classList.add('hide');
+                resultCounter.textContent = data.length;
+                area.textContent = `${data[0].city.name}, ${data[0].country.name}`
+            }
+
+
+            for (const listing of data) {
+                // console.log(listing)
+                // create listing boxes in a sidebar
+                const href = document.createElement("a");
+                const box = document.createElement("div");
+                const imageContainer = document.createElement("div");
+                const image = document.createElement("img");
+                const detailsContainer = document.createElement("div");
+                const title = document.createElement("div");
+                const city = document.createElement("p");
+                const street = document.createElement("div");
+                
+                const divMidSectionContainer = document.createElement("div");
+                const divRatingAndCostContainer = document.createElement("div");
+                const divRating = document.createElement("div");
+                
+                const cost = document.createElement("div");
+                const value = document.createElement("span");
+                const currency = document.createElement("span");
+                const month = document.createElement("span");
+
+                const categoryContainer = document.createElement("div");
+                // const category = document.createElement("span");
+
+                // Set classes
+                box.setAttribute("class", "listing-card");
+                imageContainer.setAttribute("class", "cover-image");
+                detailsContainer.setAttribute("class", "details")
+                title.setAttribute("class", "listing-title");
+                street.setAttribute("class", "listing-street");
+                // divMidSectionContainer.setAttribute("class", "d-flex justify-content-between");
+                categoryContainer.setAttribute("class", "category-container");
+   
+                cost.setAttribute("class", "cost");
+                value.setAttribute("class", "value");
+                currency.setAttribute("class", "currency");
+          
+                // Set content
+                title.textContent = listing.title;
+                city.textContent = listing.city.name;
+                street.textContent = listing.context.fullAddress;
+                image.setAttribute("src", listing.images.length ? listing.images[0].url : "/images/no-image.jpeg")
+                href.setAttribute("href", `/school/${listing._id}`);
+
+                value.textContent = listing.price.value;
+                currency.textContent = listing.price.currency;
+                month.textContent = "/month";
+                
+
+                for (const category of listing.category) {
+                    const span = document.createElement("span");
+                    span.setAttribute("class", "badge bg-primary");
+                    span.textContent = category;
+                    categoryContainer.append(span)
+                }
+
+                // Append
+                cost.append(value);
+                cost.append(currency);
+                cost.append(month);
+                divRatingAndCostContainer.append(cost);
+
+                divMidSectionContainer.append(divRatingAndCostContainer)
+                divMidSectionContainer.append(categoryContainer)
+                
+                imageContainer.append(image);
+                detailsContainer.append(title);
+                detailsContainer.append(divMidSectionContainer)
+                detailsContainer.append(street);
+
+                box.append(imageContainer);
+                box.append(detailsContainer);
+
+                href.append(box);
+
+                list.append(href)
+
+                let red = new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+
+                var blue = new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+
+                
+
+                // add markers to map
+                const coordinates = [listing.geometry.coordinates[1],listing.geometry.coordinates[0]];
+                // console.log(coordinates)
+                let marker = L.marker(coordinates, {
+                    riseOnHover: true,
+                    
+                }).addTo(markerLayer)
+
+                // console.log(marker)
+
+                marker.addEventListener('mouseover', (e) => {
+                    box.classList.add('highlight');
+                    marker.setIcon(red)
+                })
+
+                marker.addEventListener('mouseout', (e) => {
+                    box.classList.remove('highlight');
+                    marker.setIcon(blue)
+                })
+
+            
+                marker.addEventListener('click', (e) => {
+                    const position = marker.getLatLng();
+                    map.setView(position, 16)
+                })
+
+
+                box.addEventListener('mouseover', (e) => {
+                    marker.setIcon(red)     
+                })
+
+                box.addEventListener('mouseout', (e) => {
+                    marker.setIcon(blue)
+                })
+            }
+            checkForResults()
+        })
+
+    }
+
+
+    // searchArea(bounds, selected, price);
+
+
+
+
+    // if (zoom > max) {
+        //     zoom = max;
+        // }
+        // if (zoom < min) {
+        //     zoom = min
+        // }
+        // userQuery['zoom'] = zoom;
+
+        // localStorage.setItem('userQuery', JSON.stringify(userQuery));
+        
+        // console.log(userQuery)
+
+        // let url = buildQuery(center, zoom);
+        // window.location.assign(url)
+
+        // searchArea(bounds, selected, price, zoom)
+
+
+
+
+           
+    // check if object exists already in the local storage
+    // if not, set it up
+    // let userQuery = (localStorage.getItem('userQuery')) ?
+    //                 JSON.parse(localStorage.getItem('userQuery')) :
+    //                     { "filter" : "", "zoom" : 14, "page" : 1};
+    
+
+    // check filters based on active categories from previous session (localStorage)
+    // for (const input of categoryCheckboxes) {
+    //     for (const cat of userQuery.filter) {
+    //         if (input.dataset.name === cat) {
+    //             input.checked = true;
+    //         }
+    //     }
+    // }
+
+
+    // const parsedUserQuery = JSON.parse(localStorage.getItem('userQuery'));
+    // const indexInUserQuery = parsedUserQuery.filter.indexOf(e.target.dataset.name);
+    // if (indexInUserQuery > -1) {
+    //     localStorage.removeItem(e.target.dataset.name)
+    // }
+
+
+
+    // userQuery['filter'] = [...selected]
+    // userQuery['zoom'] = zoom;
+
+    // save user query to local memory
+    // localStorage.setItem('userQuery', JSON.stringify(userQuery));
+    
+    // searchArea(bounds, selected, price)
+
+
+
+
+
+    // const coordinates = {
+        //     sw_long,
+        //     sw_lat
+        // }
+        // console.log(coordinates)
+    // build mongo query
+    
+    // if (filter) {
+    //     console.log('there is a filter')
+    //     const activeFilters = filter.split('-');
+    // } else {
+    //     console.log('there is NOT a filter')
+    // }
+
+    // for (const fil of filter) {
+    //     activeFilters.push(fil)
+    // }
+
+    // const distance = 10000 // in m
+    // if (search_by_map === 'true') {
+    //     console.log('using bbox')
+    //     query = {
+    //         geometry: { $geoWithin: { $box: [
+    //             [parseFloat(sw_long), parseFloat(sw_lat)],
+    //             [parseFloat(ne_long), parseFloat(ne_lat)]
+    //         ]}}
+    //     }
+    // } else {
+    //     query = {
+    //         $near: {
+    //             $geometry: {
+    //                 type: "Point",
+    //                 coordinates: [parseFloat(lat), parseFloat(long)]
+    
+    //             },
+    //             $maxDistance: distance
+    //         }
+    //     }
+    // }
+
+
+    // const query = { 
+        //     $near: {
+        //         $geometry: {
+        //             type: "Point",
+        //             coordinates: [parseFloat(lat), parseFloat(long)]
+    
+        //         },
+        //         $maxDistance: distance
+        //     }
+        // }
+    
+    
+        // console.log(req.query)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// app.get('/new', async (req, res) => {
+    //     const school = new School({ title: 'School in Vinohrady', price: '80' })
+    //     await school.save();
+    
+    //     res.send(school)
+    // })
+    
+    // app.get('/schools', async (req, res) => {
+    //     const schools = await School.find();
+    //     res.render('index', { schools })
+    // })
+    
+    
+    // const categories = [
+    //     {
+    //         "name": "Montessori",
+    //         "icon": ""
+    //     },
+    //     {
+    //         "name": "Forest School",
+    //         "icon": ""
+    //     },
+    //     {
+    //         "name": "Vegan",
+    //         "icon": ""
+    //     },
+    //     {
+    //         "name": "Public",
+    //         "icon": ""
+    //     },
+    //     {
+    //         "name": "Bilingual",
+    //         "icon": ""
+    //     }
+    // ]
+    
+    // const amenities = [
+    //     {
+    //         "name": "Outdoor Playing Area"
+    //     },
+    //     {
+    //         "name": "Nature Corner"
+    //     },
+    //     {
+    //         "name": "Creative Area"
+    //     },
+    //     {
+    //         "name": "Reading Nook"
+    //     },
+    //     {
+    //         "name": "Music Center"
+    //     },
+    //     {
+    //         "name": "Rest Mats"
+    //     },
+    //     {
+    //         "name": "Open Space Classroom"
+    //     },
+    //     {
+    //         "name": "In-House Kitchen"
+    //     }
+    // ]
+    
+    // app.get('/schools/new', async (req, res) => {
+      
+    //     res.render('new', {categories, amenities })
+    // })
+    
+    // app.post('/schools', async(req, res) => {
+    //     console.log(req.body.school);
+    
+    //     // const school = new School(req.body.school);
+    //     // // school.author = req.user._id;
+    
+    //     // console.log(school);
+    //     // await school.save();
+    //     // req.flash('success', 'New school added!');
+    //     // req.redirect(`/schools/${school._id}`);
+    
+    // })
+    
+    // app.get('/schools/:id', async (req, res) => {
+    //     const { id } = req.params;
+    //     const school = await School.findById(id);
+    //     res.render('show', { school })
+    // })
+    
+    // app.listen(3000, async () => {
+    //     console.log('Serving on port 3000')
+    //     try {
+    //         MongoClient.connect(process.env.MONGO_URI, function(err, client) {
+    //             collection = client.db("preschoolFinder").collection("schools");
+    //             // perform actions on the collection object
+    //             // client.close();
+    //           });
+            
+    //     } catch (e) {
+    //         console.error(e);
+    //     }
+    // });

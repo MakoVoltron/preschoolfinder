@@ -1,0 +1,54 @@
+<style>
+    .alert-bottom {
+        bottom: -10px;
+        opacity: 0;
+        transition: opacity 1.3s ease-out, bottom 1s;
+    }
+
+    .animateIn {
+        bottom: 10vh;
+        opacity: 1;
+    }
+
+    .hidden {
+        opacity: 0;
+    }
+
+</style>
+
+<% if (success && success.length) { %>
+    <div class="alert-bottom">
+        <div class="container d-flex align-content-center">
+            <div>
+                <i class="fa-solid fa-circle-check text-success"></i>
+            </div>
+            <p> <%= success %> </p>
+        </div>
+    </div>
+<% } %>
+
+<% if (error && error.length) { %>
+    <div class="alert-bottom">
+        <div class="container d-flex align-content-center">
+            <div>
+                <i class="fa-solid fa-triangle-exclamation text-danger"></i>
+            </div>
+            <p> <%= error %> </p>
+        </div>
+    </div>
+<% } %>
+
+<script>
+    // Animate Flash message
+    const alertMsg = document.querySelector('.alert-bottom');   
+    // check if the alert message div is already loaded on page, then run functions 
+    if (alertMsg != null) {
+        setTimeout(function() {
+            alertMsg.classList.add('animateIn')
+        }, 10)
+    
+        setTimeout(function() {
+            alertMsg.classList.add('hidden');
+        }, 3500)
+    }
+</script>

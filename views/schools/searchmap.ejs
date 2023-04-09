@@ -1,0 +1,626 @@
+<% layout('layouts/boilerplate') %>
+<link rel="stylesheet" href="/css/searchmap.css">
+<link rel="stylesheet" href="/css/stars.css">
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+   integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+   crossorigin=""/>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+   integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+   crossorigin="">
+</script>
+
+<link rel="stylesheet" href="/css/autocomplete.css">    
+
+<!-- Leaflet Locate Control -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+
+<% let url = host %>
+
+<div class="row gx-0">
+
+    
+
+    <!-- LEFT SIDE -->
+    <div class="col left-side">
+    
+        <div class="mt-2 mb-2">
+            <p class="result-feedback">We found <strong><span class="count"><%= schools.length > 0 ? schools[0].totalCount.total : 0 %></span> preschools</strong> matching your criteria.</p>
+            <!-- <p class="result-feedback">We found <span class="count"><%= schools.length > 0 ? schools[0].totalCount.total : 0 %></span> Preschools in <span class="area">Ostrava, Czech Republic</span></p> -->
+            <!-- <p class="result-feedback">We found <span class="count"><%= schools.length %></span> Preschools in <span class="area">Ostrava, Czech Republic</span></p> -->
+            <p class="no-result hide">Dank! No results found for this area. Try different location.</p>
+        </div>
+        
+        
+        <div class="row gx-1">
+            <div class="col-8">
+                <input id="search-input" class="form-control" placeholder="Search for City or Region">
+            </div>
+            <!-- <div class="col-2">
+                <input type="number" class="form-control" id="min-price" min="0" placeholder="Min Price">
+            </div> -->
+            <div class="col-3">
+                <input type="number" min="0" class="form-control" id="max-price" placeholder="Max Price/Month" value="<%= (maxPrice > 0) ? maxPrice : '' %>">
+            </div>
+            <div class="col-1 d-grid">
+                <button id="search" class="btn btn-dark"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <!-- <div class="col-2 d-grid">
+                <button class="btn btn-danger" id="search"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div> -->
+        </div>
+
+        <div class="mt-2 filters">
+            <% for (const category of categories) { %>
+                <% if (activeFilters != undefined) { %>
+                    <% for (let i; i < activeFilters.length; i++) %>
+                    <input type="checkbox" class="btn-check category-checkbox" <%= activeFilters.indexOf(category.short) != -1 ? 'checked' : '' %> data-name="<%= category.short %>" id="<%= category.name %>" value="<%= category.name %>" autocomplete="off">
+                    <label class="btn btn-outline-dark mb-1" for="<%= category.name %>"><%= category.name %></label>
+                <% } else { %>
+                    <input type="checkbox" class="btn-check category-checkbox" data-name="<%= category.short %>" id="<%= category.name %>" value="<%= category.name %>" autocomplete="off">
+                    <label class="btn btn-outline-dark mb-1" for="<%= category.name %>"><%= category.name %></label>
+                <% } %>
+            <% } %>
+        </div>
+
+        <div class="listing__container">
+            <div class="no-results-found">
+                <div class="image-container">
+                    <img src="/images/no-results.png"></img>
+                </div>
+                <div class="m-2">
+                    No preschools found with given criterias. 
+                    <br>Try clearing all filters or search in another location.
+                </div>
+                <div>
+                    <button id="clear-btn" class="nav-btn">Clear Filters</button>
+                </div>
+            </div>
+
+            <div class="listing__list">
+                <% for (const school of schools) { %>
+                    <div class="listing-card" data-lat="<%= school.geometry.coordinates[1] %>" data-long="<%= school.geometry.coordinates[0] %>">
+                        <div class="go-to-marker"><i class="fa-solid fa-location-dot"></i></div>
+                        <a href="/school/<%= school._id %>">
+                            <!-- Card content  -->
+                            <div class="card-content">
+                                <div class="cover-image">
+                                    <img src="<%= school.images.length ? school.images[0].url : '/images/no-image.jpeg' %>">
+                                </div>
+                                <div class="details">
+                                    <div class="d-flex align-items-center">
+                                        <!-- Tier -->
+                                        <% if (school.tier === 'premium') { %>
+                                            <img class="premium-icon" src="/images/icons/premium.png">
+                                        <% } %>
+                                        <div class="listing-title ms-1"><%= school.title %></div>
+                                       
+                                    </div>
+    
+                                    <div class="d-flex justify-content-between">
+                                
+                                        <div class="d-flex align-items-center">
+                                       
+                                            <% if (school.totalRating) { %>
+                                                <div class="starability-result" data-rating="<%= Math.ceil(school.totalRating) %>">
+                                                    Rated: <%= school.totalRating %> stars
+                                                </div> 
+                                                <small class="reviews-total text-muted">(<%= school.reviews.length %>)</small>
+                                            <% } else { %>
+                                                <div class="starability-result" data-rating="0">Rated: 0 stars</div>
+                                            <% } %>
+                                            <% if (school.price.value) { %>
+                                                <div class="cost ms-4"><span class="value"><%= school.price.value %></span> <span class="currency"><%= school.price.currency %></span> a month</div>
+                                            <% } %>
+                                            <!-- <div class="cost"><span class="value"><%= school.price.value %></span><span class="currency">USD</span><span>/month</span></div> -->
+                                        </div>
+
+                                        <div>
+                                            <% for (const category of school.category) { %>
+                                                <span class="badge bg-primary"><%= category %></span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                
+                                    <div class="listing-street position-absolute bottom-0 mb-1"><%= school.context.fullAddress %></div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+            <div class="pagination">
+                <% if (schools && schools.length > 0) { %>
+
+             
+                <!-- <button id="previousPage" class="btn btn-primary">Previous</button> -->
+                <% for (let i = 1; i < Math.ceil(schools[0].totalCount.total/pagination.limit + 1) ; i++) { %>
+                    <button class="btn <%= pagination.page == i ? 'btn-info' : 'btn-outline-info' %> page-btn"><%= i %></button>
+                <% } %>
+                <!-- <button id="nextPage" class="btn btn-primary">Next</button> -->
+                <% } %>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="col search__map">
+        <button type="button" id="search-area-btn" class="search-area-btn">Search this area</button>
+        <div id="map" data-lat="<%= lat %>" data-long="<%= long %>" data-sw_lat="<%= sw_lat %>" data-sw_long="<%= sw_long %>" data-ne_lat="<%= ne_lat %>" data-ne_long="<%= ne_long %>"></div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    let host = '<%= url %>';
+    let page = '<%= pagination.page %>'
+    let zoom = '<%= zoom %>'
+    console.log(page)
+
+    // important variables
+    const mapDiv = document.querySelector('#map');
+    let coordinates, center, bounds;
+
+    let c = mapDiv.dataset; // just for a shortcut
+    const lat = Number(c.lat);
+    const long = Number(c.long);
+    const sw_lat = Number(c.sw_lat);
+    const sw_long = Number(c.sw_long);
+    const ne_lat = Number(c.ne_lat);
+    const ne_long = Number(c.ne_long);
+
+    let selected = [];
+    
+    const price = {
+        min: '',
+        max: ''
+    }
+
+    const container = document.querySelector('.listing__container');
+    const noResultsMsg = document.querySelector('.no-results-found');
+    const list = document.querySelector('.listing__list');
+    const listings = document.querySelectorAll('.listing-card');
+    let maxPrice = document.querySelector('#max-price');
+
+    // maximum and minimum map zoom levels
+    let max = 17;
+    let min = 13;
+
+    function getPrice () {
+        // const maxPrice = document.querySelector('#max-price');
+        // const minPrice = document.querySelector('#min-price');
+        price.max = Number(maxPrice.value);
+        // price.min = Number(minPrice.value);
+    }
+    
+    function getCurrentMapValues() {
+        center = map.getCenter();
+        bounds = map.getBounds().toBBoxString();
+        zoom = map.getZoom();
+    }
+
+
+
+    // set up coordinates variable for the map to use
+    if (lat != 0) {
+        console.log('lat is defined')
+        
+        // standard lat + long coordinates
+        coordinates = [long , lat]
+
+    } else {
+        console.log('search by map active')
+        const corner1 = (sw_lat + ne_lat) / 2;
+        const corner2 = (sw_long + ne_long) / 2;
+        coordinates = [corner1, corner2]
+    }
+
+
+
+    // check if there's zoom level stored in local storage
+    // let userQuery = JSON.parse(localStorage.getItem('userQuery'));
+    // let zoomLevel = JSON.parse(localStorage.getItem('userQuery'));
+
+    // INITIATE THE MAP
+    let map = L.map('map', {
+        zoomControl: true,
+    }).setView(coordinates, zoom) 
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: max,
+        minZoom: min,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // marker Layer
+    let markerLayer = L.layerGroup().addTo(map);
+
+    L.control.locate().addTo(map)
+
+    getCurrentMapValues();
+    
+    // Marker design
+    let red = new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+
+    var blue = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    // MARKERS
+    for (const school of listings) {
+        const lat = school.dataset.lat;
+        const long = school.dataset.long;
+        const coordinates = [Number(lat), Number(long)];
+        const goTo = school.querySelector('.go-to-marker');
+
+        goTo.addEventListener('click', (e) => {
+            map.flyTo(coordinates, 16)
+        });
+
+        let marker = L.marker(coordinates, {
+            riseOnHover: true
+        }).addTo(markerLayer)
+
+        marker.addEventListener('mouseover', (e) => {
+            school.querySelector('.card-content').classList.add('highlight');
+            marker.setIcon(red)
+        })
+
+        marker.addEventListener('mouseout', (e) => {
+            school.querySelector('.card-content').classList.remove('highlight');
+            marker.setIcon(blue)
+        })
+
+    
+        marker.addEventListener('click', (e) => {
+            const position = marker.getLatLng();
+            map.setView(position, 16)
+        })
+
+        school.addEventListener('mouseover', (e) => {
+            marker.setIcon(red);
+            // map.flyTo(coordinates, 15)  
+            // map.setView(coordinates)   
+        })
+
+        school.addEventListener('mouseout', (e) => {
+            marker.setIcon(blue)
+        })
+
+        
+
+    }
+
+    // see if any listings were found
+    // if not, add 'no results found' banner
+    function checkForResults() {
+        if (list.childElementCount == 0) {
+            noResultsMsg.style.display = 'block';
+        } else {
+            noResultsMsg.style.display = 'none';
+        }
+    }
+    checkForResults()
+
+
+
+    function updateURL(bounds, selected, price, zoom, page = 1) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+
+        console.log(bounds)
+        if (bounds !== undefined) {
+            const bounds_array = bounds.split(',');
+
+            // bounding box
+            const sw_long = bounds_array[0]
+            const sw_lat = bounds_array[1]
+            const ne_long = bounds_array[2]
+            const ne_lat = bounds_array[3]
+
+            // delete existing lat and long from URL (we are switching to bbox)
+            params.delete('lat');
+            params.delete('long');
+    
+            params.set('sw_long', sw_long);
+            params.set('sw_lat', sw_lat);
+            params.set('ne_long', ne_long);
+            params.set('ne_lat', ne_lat);
+            // if (params.has('sw_long')) {    // check if these params are already present
+            //     params.set('sw_long', sw_long);
+            //     params.set('sw_lat', sw_lat);
+            //     params.set('ne_long', ne_long);
+            //     params.set('ne_lat', ne_lat);
+            // } else {
+            //     params.append('sw_long', sw_long);
+            //     params.append('sw_lat', sw_lat);
+            //     params.append('ne_long', ne_long);
+            //     params.append('ne_lat', ne_lat);
+            // }
+
+            params.set('search_by_map', true);
+        }
+
+        // check if price was passed on
+        if (price !== undefined) {
+            if (price.max !== '') { 
+                params.set('maxPrice', price.max) 
+            } else {
+                params.delete('maxPrice')
+            }
+            if (price.min !== '') { params.set('minPrice', price.min) }
+        }
+            
+
+        // other
+        params.set('zoom', zoom);
+        params.set('filter', selected.join('-'));
+        params.set('page', page);
+       
+
+        if (params.get('filter') === '') {
+            params.delete('filter')
+        }
+        
+        
+        const updatedParams = params.toString();
+        const newURL = url.origin + '/searchmap?' + updatedParams;
+        console.log(newURL)
+        window.location.href = newURL;
+   
+    }
+    // updateURL()
+
+    // PAGINATION
+    const pageBtns = document.querySelectorAll('.page-btn');
+    for (const btn of pageBtns) {
+        btn.addEventListener('click', (e) => {
+            const clickedNumber = e.target.textContent;
+            getCurrentMapValues();
+            getPrice();
+            updateURL(bounds, selected, price, zoom, clickedNumber)
+        })
+    }
+
+
+    function pageTurn (direction) {
+        const baseUrl = window.location.href.split('?')[0];
+        const parameters = window.location.search.slice(1);
+        const searchParams = new URLSearchParams(parameters);
+        const currentPage = parseInt(searchParams.get('page'));
+        if (direction == 'back') {
+            if (currentPage > 1) {
+                searchParams.set('page', currentPage - 1);
+                const newUrl = baseUrl + '?' + searchParams.toString();
+                window.location.href = newUrl;
+            }
+        } else {
+            searchParams.set('page', currentPage + 1);
+            const newUrl = baseUrl + '?' + searchParams.toString();
+            window.location.href = newUrl;
+        }
+    }
+    // const next = document.querySelector('#nextPage');
+    // next.addEventListener('click', () => {
+    //     pageTurn()
+    // })
+
+    // const previous = document.querySelector('#previousPage');
+    // previous.addEventListener('click', () => {
+    //     pageTurn('back')
+    // })
+
+
+
+    // SEARCH CURRENT MAP AREA ON CLICK OF A BUTTON
+    const searchAreaBtn = document.querySelector('#search-area-btn');
+    searchAreaBtn.addEventListener('click', () => {
+        // center = map.getCenter();
+        // bounds = map.getBounds().toBBoxString();
+        // zoom = map.getZoom();
+        console.log(bounds)
+        getCurrentMapValues();
+        console.log(bounds)
+        getPrice();
+        updateURL(bounds, selected, price, zoom)
+    })
+
+
+
+
+</script>
+
+<script>
+    // FILTERS
+    const activeCategories = [];
+    const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+    
+    // handle filters
+    const filters = document.querySelectorAll('.filters input');
+    const labels = document.querySelectorAll('.filters label');
+    const applyFiltersBtn = document.querySelector('#search');
+    // const maxPrice = document.querySelector('#max-price');
+
+    // PRICE filter
+    applyFiltersBtn.addEventListener('click', () => {
+        getCurrentMapValues();
+        getPrice()
+
+        // fill the rest of the values
+        // bounds = map.getBounds().toBBoxString();
+        // zoom = map.getZoom();
+
+        updateURL(bounds, selected, price, zoom)
+    })
+     
+    // CATEGORY filters
+    for (const filter of filters) {
+        // check for active filter from previous session
+        // add them to current 'selected' array
+        if (filter.checked == true) {
+            selected.push(filter.dataset.name)
+        }
+        filter.addEventListener('change', (e) => {
+         
+            // check for which filter is active
+            if (e.target.checked == true) {
+                // add selected filter to active filters array (using assigned data-name)
+                selected.push(e.target.dataset.name)
+            } 
+
+            if (e.target.checked == false) {
+                // check if the item is in selected array and remove
+                const index = selected.indexOf(e.target.dataset.name);
+                if (index > -1) {
+                    selected.splice(index, 1);
+                }
+            }
+
+            // let zoom = map.getZoom();
+            // let center = map.getCenter();
+            getCurrentMapValues()
+            getPrice()
+
+            updateURL(undefined, selected, price, zoom)
+        })
+    }
+
+
+
+
+
+
+</script>
+
+<script>
+    // CHECK FOR NO RESULTS & CLEAR FILTERS
+    const clearBtn = document.querySelector('#clear-btn');
+    clearBtn.addEventListener('click', () => {
+        selected = [];
+        price.min = '';
+        price.max = '';
+        maxPrice = '';
+        // zoom = map.getZoom();
+        // bounds = map.getBounds().toBBoxString();
+        getCurrentMapValues()
+        // console.log("clear event " + price.max)
+        updateURL(bounds, selected, price, zoom)
+    })
+
+
+    // ADD DELAY TO QUERING SCHOOL DATABASE WHILE ADDING PRICE
+    let typingTimer;
+    let doneTypingInterval = 500;
+
+    // on keyup, start the countdown
+    maxPrice.addEventListener('keyup', () => {
+        clearTimeout(typingTimer);
+            
+        if (maxPrice.value == '') {
+            // maxPrice.blur();
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        } 
+        // else {
+        //     price.max = '';
+        //     searchArea(bounds, selected, price)
+        // }
+    });
+
+    // maxPrice.addEventListener('keydown', (e) => {
+    //     if (e.target.value != '' & e.keyCode === 8) {
+    //         maxPrice.value = '';
+    //     }
+    // })
+
+    // do something after user finishes typing
+    function doneTyping() {
+        getCurrentMapValues();
+        getPrice();
+        updateURL(bounds, selected, price, zoom)
+        // if (maxPrice.value != '') {
+        //     price.max = maxPrice.value;   
+        // } else {
+        //     price.max = '';
+        // }
+        // searchArea(bounds, selected, price)
+    }
+
+
+</script>
+
+<script src="/js/autocomplete.js"></script>
+
+
+<!-- https://www.airbnb.com
+/s
+/Ho-Chi-Minh-City--Ho-Chi-Minh--Vietnam
+/homes
+?place_id=ChIJ0T2NLikpdTERKxE8d61aX_E
+&refinement_paths
+%5B%5D=%2Fhomes
+&checkin=2022-11-13
+&checkout=2022-11-19
+&date_picker_type=calendar
+&adults=1
+&children=0
+&infants=0
+&pets=0
+&search_type=AUTOSUGGEST -->
+
+
+
+<!-- https://www.airbnb.com
+/s/Ho-Chi-Minh-City--Ho-Chi-Minh--Vietnam/homes
+?place_id=ChIJ0T2NLikpdTERKxE8d61aX_E
+&refinement_paths%5B%5D=%2Fhomes
+&checkin=2022-11-13&checkout=2022-11-19
+&date_picker_type=calendar&adults=1
+&search_type=user_map_move&tab_id=home_tab
+&query=Ho%20Chi%20Minh%20City%2C%20Ho%20Chi%20Minh%2C%20Vietnam
+&flexible_trip_lengths%5B%5D=one_week
+&price_filter_num_nights=6
+&ne_lat=10.814605688918556
+&ne_lng=106.85657091900333
+&sw_lat=10.696142001770415
+&sw_lng=106.70981951053813
+&zoom=13
+&search_by_map=true -->
+
+<!-- 
+http://localhost:3000/searchmap
+?
+page=1
+&sw_long=18.16246032714844
+&sw_lat=49.76485651326669
+&ne_long=18.28433990478516
+&ne_lat=49.81594550415031
+&search_by_map=true
+&zoom=13
+&filter=vegan
+&sw_long=-0.06093978881835938&
+sw_lat=-0.03965377491055834
+&ne_long=0.06093978881835938
+&ne_lat=0.03948211357455196
+&search_by_map=true&zoom=13&filter=public&sw_long=-0.06093978881835938&sw_lat=-0.03965377491055834&ne_long=0.06093978881835938&ne_lat=0.03948211357455196&search_by_map=true&zoom=13&filter=bilingual-public -->
+
+

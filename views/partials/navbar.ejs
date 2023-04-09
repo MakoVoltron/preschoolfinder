@@ -1,0 +1,64 @@
+<link rel="stylesheet" href="/css/navbar.css">
+<!-- <link rel="stylesheet" href="/css/loginModal.css"> -->
+<!-- <link href="/css/userForm.css" rel="stylesheet"> -->
+
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/"><h3>Preschool Finder</h3></a>
+
+        <!-- Search school -->
+        <!-- <button type="button" data-bs-toggle="modal" data-bs-target="#search-modal" class="search-btn"><i class="bi bi-search"></i> Search... </button> -->
+
+        <nav class="justify-content-center float-md-right">
+        <!-- <nav class="ms-auto justify-content-center float-md-right"> -->
+
+
+          <% if(!currentUser) { %>
+            <div class="d-flex">
+              <a href="/school/new" class="nav-link nav-btn">Add School</a>
+              <a class="nav-link nav-btn" data-bs-toggle="modal" data-bs-target="#loginModal">Login / Join</a>
+            </div>
+            <% } else { %>
+              <div class="d-flex">
+                <a href="/school/new" class="d-inline-block">
+                  <button type="button" class="nav-btn nav-cta position-relative">Add Preschool</button>
+                </a>
+                <div class="dropdown">
+                <!-- Profile -->
+                <button type="button" class="dropdown-toggle nav-btn" data-bs-toggle="dropdown" data-bs-target="#dropdown-menu" aria-expanded="false">
+                    <strong><%= currentUser.username %></strong> <i class="fa-solid fa-circle-user"></i>
+                  </button>
+                    <ul id="dropdown-menu" class="dropdown-menu dropdown-menu-end me-2" data-bs-popper="none" aria-labelledby="account-dropdown">
+                      <li><small class="dropdown-item email"><%= currentUser.email %></small></li>
+                      <% if (currentUser.isAdmin) { %>
+                        <li><a class="dropdown-item" href="/admin/dashboard">Dashboard</a></li>
+                      <% } else { %>
+                        <li><a class="dropdown-item" href="/user/<%= currentUser._id %>">My Profile</a></li>
+                      <% } %>
+        
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a href="/user/logout" class="dropdown-item text-danger">Logout <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                    </ul>
+              </div>
+          <% } %>
+        </nav>
+    </div>
+  </nav>
+
+<!-- <div class="modal fade" id="search-modal" aria-hidden="true" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <input id="search-modal-input" class="form-control form-control-lg" type="text" placeholder="Search city...">
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+<%- include('../partials/signupModal.ejs') %>
+
+
+<script src="/js/passwordCheck.js"></script>
+<script src="/js/validateOnSubmit.js"></script>
+

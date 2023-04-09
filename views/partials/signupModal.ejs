@@ -1,0 +1,196 @@
+<link href="/css/userForm.css" rel="stylesheet">
+
+<!-- Modal -->
+<div class="modal" id="loginModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="loginModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content overflow-hidden">
+        <div class="modal-body p-0">
+          <div class="row login-signup-card m-auto w-100">
+            <!-- LEFT SIDE -->
+            <div class="col-5 img">
+              <div class="text-over-image">
+                <h3>Welcome to Preschool Finder</h3>
+                <p>We're so happy to have you here!</p>
+              </div>
+            </div>
+  
+            <!-- RIGHT SIDE -->
+            <div class="col-7 content">
+              <div class="w-100">
+                <button type="button" class="btn-close float-end pt-4 pe-1" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              
+              <!-- Modal Nav -->
+              <ul class="nav ps-2">
+                <li class="nav-item me-4">
+                  <a class="nav-link active">Login</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link ps-2">Sign Up</a>
+                </li>
+              </ul>
+              
+              <!-- FORM -->
+              <div>
+                <!-- Login card -->
+                <div id="login-card">
+                  <form action="/user/login" method="POST">
+                    <div class="form-container ms-3 me-3">
+                        <div class="m-auto mt-3 p-3 form-card">  
+                            <div class="mb-3">
+                                <a href="/auth/facebook">
+                                    <div class="d-grid">
+                                        <button type="button" class="btn btn-primary"><i class="fa-brands fa-facebook"></i> Facebook</button>
+                                    </div>
+                                </a>
+                            </div>
+                
+                            <p class="text-center">or</p>
+                            
+                            <div class="mb-3">
+                                <!-- <label class="form-label" for="username">Username</label> -->
+                                <input required class="form-control" type="text" name="username" placeholder="Jane Doe">
+                            </div>
+                
+                            <div class="mb-3">
+                                <!-- <label class="form-label" for="password">Password</label> -->
+                                <input required class="form-control" type="password" name="password" placeholder="Password">
+                                <a href="/user/recovery" class="d-flex flex-row-reverse text-decoration-none recovery-btn"><small class="text-muted">Forgot your password?</small></a>
+                            </div>
+                
+                            <div class="d-grid">
+                                <button class="btn btn-success">Login</button>
+                            </div>
+                        </div>
+                    </div>
+                  </form>
+                </div>
+  
+                <!-- Signup card -->
+                <div id="signup-card">
+                  <form action="/user/register" method="POST" novalidate>
+                    <div class="form-container ms-3 me-3">
+                        <div class="m-auto mt-3 p-3 form-card">  
+                            <div class="mb-3">
+                                <a href="/auth/facebook">
+                                    <div class="d-grid">
+                                        <button type="button" class="btn btn-primary"><i class="fa-brands fa-facebook"></i> Facebook</button>
+                                    </div>
+                                </a>
+                            </div>
+                
+                            <p class="text-center">or</p>
+                            
+                            <div class="mb-3">
+                              <input required class="form-control" type="text" id="username-signup" name="username" placeholder="Username">
+                              <div class="form-text">Publicly displayed. Do not use your email address as your username.</div>
+                              <div class="valid-feedback">
+                                  Looks good!
+                              </div>
+                              <div class="invalid-feedback">
+                                  Please, choose a username.
+                              </div>
+                            </div>
+                
+                            <div class="mb-3">
+                              <input required class="form-control" type="email" id="email-signup" name="email" placeholder="Email">
+                              <div class="valid-feedback">
+                                  Looks good!
+                              </div>
+                              <div class="invalid-feedback">
+                                  Please, type your email.
+                              </div>
+                            </div>
+  
+                            <div class="mb-3">
+                              <div class="mb-3">
+                                  <input required class="form-control" type="password" id="password-signup" name="password" placeholder="Password">
+                                
+                                  <div class="password-feedback"></div>
+                                  <div class="invalid-feedback">
+                                      Please, choose a strong password.
+                                  </div>
+                              </div>
+                              <div>
+                                  <input required class="form-control" type="password" id="password-signup-confirm" name="passwordConfirm" placeholder="Confirm Password">
+                                  <div class="passwordconfirm-feedback"></div>
+                              </div>
+                            </div>
+                
+                            <div class="d-grid">
+                              <button class="btn btn-success d-grid">Register</button>
+                            </div>
+                        </div>
+                    </div>
+                  </form>
+                </div>               
+              </div>
+            </div>
+          </div>
+          <!-- Recovery card -->
+          <!-- <div id="recovery-card" class="hide">
+            <div class="w-100">
+              <button type="button" class="btn-close float-end pt-4 pe-1" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <h3>Account recovery</h3>
+          </div> -->
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+  <script>
+
+    // Modal Navlink control
+    const btns = document.querySelectorAll('.modal .nav-link');
+    const loginCard = document.querySelector('#login-card');
+    const signupCard = document.querySelector('#signup-card');
+    // const recoveryCard = document.querySelector('#recovery-card');
+    // const recoveryBtn = document.querySelector('.recovery-btn');
+    // const loginSignupCard = document.querySelector('.login-signup-card')
+    // const recoveryBackBtn = document.querySelector('#recovery-back');
+
+
+    btns.forEach(el => {
+      el.addEventListener('click', (e) => {
+        // remove .active from all other elements
+        btns.forEach(element => {
+          element.classList.remove('active')
+        })
+  
+        // add .active on clicked element
+        e.target.classList.add('active')
+        
+        if (e.target.textContent === 'Login') {
+          signupCard.style.display = 'none';
+          loginCard.style.display = 'block';
+        } else {
+          loginCard.style.display = 'none';
+          signupCard.style.display = 'block';
+        }
+      })
+    })
+
+    // recoveryBtn.addEventListener('click', () => {
+    //   loginSignupCard.style.display = 'none';
+    //   // loginModal.classList.add('hide');
+    //   // recoveryCard.style.display = 'block';
+    //   // recoveryCard.classList.add('show');
+    //   recoveryCard.classList.remove('hide');
+    // });
+
+    // recoveryBackBtn.addEventListener('click', () => {
+    //   recoveryCard.style.display = 'none';
+    //   loginModal.style.display = 'block';
+    // })
+
+    // closeRecoveryCardBtn.addEventListener('click', (e) => {
+    //   e.target.closest('#recovery-card').style.display = 'none';
+    // })
+  
+  </script>
