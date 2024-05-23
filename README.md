@@ -1,8 +1,10 @@
- 👋 Hi there,
+👋 Hi there,
 
 this my first larger app built in Node.js/Express.
 
 It's hosted on Heroku and LIVE 🚀 
+
+Go see it here https://preschoolfinder.net
 
 It uses several third-party APIs such as:
 
